@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>✈️ 幸福旅居｜管理後台</title>
+<title>✈️ 天使幸福旅居｜管理後台</title>
 <style>
   @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@300;400;500;700&display=swap');
 
@@ -22,7 +22,6 @@
   * { box-sizing: border-box; margin: 0; padding: 0; }
   body { font-family: 'Noto Sans TC', sans-serif; background: #f1f5f9; min-height: 100vh; }
 
-  /* Login */
   .login-screen {
     min-height: 100vh;
     display: flex;
@@ -71,10 +70,6 @@
     letter-spacing: 2px;
   }
 
-  .login-btn:hover { background: #152e4a; }
-  .login-error { color: var(--red); font-size: 13px; margin-top: 10px; }
-
-  /* Admin */
   .admin-screen { display: none; }
 
   .topbar {
@@ -87,45 +82,28 @@
 
   .topbar .title { color: white; font-size: 16px; font-weight: 500; letter-spacing: 1px; }
   .topbar .logout { color: rgba(255,255,255,0.6); font-size: 13px; cursor: pointer; }
-  .topbar .logout:hover { color: white; }
 
   .tabs {
     background: white;
     border-bottom: 1px solid #e5e7eb;
     display: flex;
-    padding: 0 24px;
+    padding: 0 16px;
+    overflow-x: auto;
   }
 
   .tab {
-    padding: 14px 20px;
-    font-size: 14px;
+    padding: 14px 16px;
+    font-size: 13px;
     color: var(--gray);
     cursor: pointer;
     border-bottom: 2px solid transparent;
+    white-space: nowrap;
     transition: all 0.2s;
   }
 
   .tab.active { color: var(--navy); border-bottom-color: var(--navy); font-weight: 500; }
 
-  .content { padding: 24px; max-width: 960px; margin: 0 auto; }
-
-  .stat-row {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 12px;
-    margin-bottom: 24px;
-  }
-
-  .stat-card {
-    background: white;
-    border-radius: 10px;
-    padding: 16px 20px;
-    text-align: center;
-    box-shadow: 0 1px 4px rgba(0,0,0,0.06);
-  }
-
-  .stat-card .num { font-size: 28px; font-weight: 700; color: var(--navy); }
-  .stat-card .label { font-size: 12px; color: var(--gray); margin-top: 4px; }
+  .content { padding: 20px 16px; max-width: 960px; margin: 0 auto; }
 
   .card {
     background: white;
@@ -170,11 +148,7 @@
   .info-item .key { font-size: 11px; color: var(--gray); margin-bottom: 2px; }
   .info-item .val { font-size: 14px; color: #1f2937; }
 
-  .action-row {
-    display: flex;
-    gap: 10px;
-    flex-wrap: wrap;
-  }
+  .action-row { display: flex; gap: 10px; flex-wrap: wrap; }
 
   .btn {
     padding: 9px 18px;
@@ -191,9 +165,11 @@
   .btn-approve { background: var(--green); color: white; }
   .btn-reject { background: var(--red); color: white; }
   .btn-copy { background: var(--light); color: var(--navy); }
+  .btn-navy { background: var(--navy); color: white; }
+  .btn-gold { background: var(--gold); color: white; }
   .btn-sm { padding: 7px 14px; font-size: 12px; }
+  .btn-full { width: 100%; padding: 14px; font-size: 15px; letter-spacing: 1px; }
 
-  /* Copy modal */
   .modal-overlay {
     display: none;
     position: fixed;
@@ -202,6 +178,7 @@
     z-index: 100;
     align-items: center;
     justify-content: center;
+    padding: 20px;
   }
 
   .modal-overlay.show { display: flex; }
@@ -209,10 +186,12 @@
   .modal {
     background: white;
     border-radius: 14px;
-    padding: 28px 24px;
-    max-width: 400px;
-    width: 90%;
+    padding: 24px;
+    max-width: 440px;
+    width: 100%;
     box-shadow: 0 20px 60px rgba(0,0,0,0.2);
+    max-height: 90vh;
+    overflow-y: auto;
   }
 
   .modal h3 { font-size: 16px; color: var(--navy); margin-bottom: 16px; }
@@ -230,9 +209,7 @@
   }
 
   .modal-btns { display: flex; gap: 10px; }
-  .btn-full { flex: 1; }
 
-  /* Toast */
   .toast {
     display: none;
     position: fixed;
@@ -246,6 +223,8 @@
     font-size: 14px;
     z-index: 999;
     box-shadow: 0 4px 20px rgba(0,0,0,0.2);
+    text-align: center;
+    max-width: 300px;
   }
 
   .toast.success { background: var(--green); }
@@ -253,7 +232,6 @@
   .toast.show { display: block; }
 
   .empty { text-align: center; padding: 48px; color: var(--gray); font-size: 14px; }
-
   .refresh-btn {
     padding: 8px 16px;
     background: var(--cream);
@@ -268,7 +246,100 @@
   .section-tab { display: none; }
   .section-tab.active { display: block; }
 
-  /* Payment tab */
+  /* 新增活動 */
+  .form-group { margin-bottom: 16px; }
+
+  label.field-label {
+    display: block;
+    font-size: 13px;
+    font-weight: 500;
+    color: #374151;
+    margin-bottom: 6px;
+  }
+
+  .field-input {
+    width: 100%;
+    padding: 11px 14px;
+    border: 1.5px solid #d1d5db;
+    border-radius: 8px;
+    font-size: 14px;
+    font-family: 'Noto Sans TC', sans-serif;
+    background: white;
+    color: #1f2937;
+  }
+
+  .field-input:focus { outline: none; border-color: var(--navy); }
+
+  .row-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+
+  .ai-preview {
+    background: linear-gradient(135deg, #f0f7ff 0%, #faf8f3 100%);
+    border: 1.5px solid #bfdbfe;
+    border-radius: 12px;
+    padding: 18px;
+    margin-top: 16px;
+    display: none;
+  }
+
+  .ai-preview.show { display: block; }
+
+  .ai-preview h4 {
+    font-size: 13px;
+    color: var(--navy);
+    margin-bottom: 12px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .preview-section {
+    background: white;
+    border-radius: 8px;
+    padding: 14px;
+    margin-bottom: 10px;
+    font-size: 13px;
+    line-height: 1.8;
+    color: #374151;
+    white-space: pre-wrap;
+    border: 1px solid #e5e7eb;
+  }
+
+  .preview-label {
+    font-size: 11px;
+    color: var(--gold);
+    font-weight: 700;
+    letter-spacing: 1px;
+    margin-bottom: 6px;
+  }
+
+  .ai-loading {
+    text-align: center;
+    padding: 24px;
+    color: var(--gray);
+    font-size: 13px;
+  }
+
+  .ai-spinner {
+    width: 28px;
+    height: 28px;
+    border: 3px solid #e5e7eb;
+    border-top-color: var(--navy);
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+    margin: 0 auto 10px;
+  }
+
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  .section-divider {
+    font-size: 11px;
+    letter-spacing: 3px;
+    color: var(--gold);
+    text-align: center;
+    margin: 20px 0 16px;
+  }
+
+  /* Payment */
   .payment-card {
     background: white;
     border-radius: 10px;
@@ -277,27 +348,11 @@
     box-shadow: 0 1px 4px rgba(0,0,0,0.06);
   }
 
-  .payment-row {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    margin-bottom: 8px;
-  }
-
   .last5 {
     font-size: 20px;
     font-weight: 700;
     color: var(--navy);
     letter-spacing: 3px;
-  }
-
-  input.confirm-input {
-    padding: 8px 12px;
-    border: 1.5px solid #d1d5db;
-    border-radius: 6px;
-    font-size: 14px;
-    font-family: 'Noto Sans TC', sans-serif;
-    width: 120px;
   }
 </style>
 </head>
@@ -307,25 +362,26 @@
 <div class="login-screen" id="loginScreen">
   <div class="login-box">
     <div class="logo">✈️</div>
-    <h2>幸福旅居 管理後台</h2>
+    <h2>天使幸福旅居 管理後台</h2>
     <p>請輸入管理員密碼</p>
     <input type="password" id="pwdInput" placeholder="密碼" onkeydown="if(event.key==='Enter')doLogin()">
     <button class="login-btn" onclick="doLogin()">登入</button>
-    <div class="login-error" id="loginError"></div>
+    <div style="color:#dc2626;font-size:13px;margin-top:10px" id="loginError"></div>
   </div>
 </div>
 
 <!-- Admin -->
 <div class="admin-screen" id="adminScreen">
   <div class="topbar">
-    <div class="title">✈️ 幸福旅居 管理後台</div>
+    <div class="title">✈️ 天使幸福旅居 後台</div>
     <div class="logout" onclick="doLogout()">登出</div>
   </div>
 
   <div class="tabs">
-    <div class="tab active" onclick="switchTab('pending')">待確認 <span id="pendingBadge"></span></div>
+    <div class="tab active" onclick="switchTab('pending')">待確認</div>
     <div class="tab" onclick="switchTab('all')">全部登記</div>
     <div class="tab" onclick="switchTab('payment')">繳費對帳</div>
+    <div class="tab" onclick="switchTab('newActivity')">✨ 新增活動</div>
   </div>
 
   <div class="content">
@@ -333,7 +389,6 @@
     <!-- 待確認 -->
     <div class="section-tab active" id="tab-pending">
       <button class="refresh-btn" onclick="loadPending()">🔄 重新載入</button>
-      <div class="stat-row" id="statRow"></div>
       <div id="pendingList"></div>
     </div>
 
@@ -343,10 +398,91 @@
       <div id="allList"></div>
     </div>
 
-    <!-- 繳費對帳 -->
+    <!-- 繳費 -->
     <div class="section-tab" id="tab-payment">
       <button class="refresh-btn" onclick="loadPayment()">🔄 重新載入</button>
       <div id="paymentList"></div>
+    </div>
+
+    <!-- 新增活動 -->
+    <div class="section-tab" id="tab-newActivity">
+      <div class="card">
+        <div class="card-body">
+          <div class="section-divider">✦ 活動基本資料 ✦</div>
+
+          <div class="form-group">
+            <label class="field-label">活動名稱 *</label>
+            <input class="field-input" id="act_name" placeholder="例：峇里島療癒之旅">
+          </div>
+
+          <div class="row-2">
+            <div class="form-group">
+              <label class="field-label">出發日期 *</label>
+              <input class="field-input" type="date" id="act_start">
+            </div>
+            <div class="form-group">
+              <label class="field-label">回程日期 *</label>
+              <input class="field-input" type="date" id="act_end">
+            </div>
+          </div>
+
+          <div class="row-2">
+            <div class="form-group">
+              <label class="field-label">目的地 *</label>
+              <input class="field-input" id="act_location" placeholder="例：印尼峇里島">
+            </div>
+            <div class="form-group">
+              <label class="field-label">活動類型 *</label>
+              <select class="field-input" id="act_type">
+                <option value="海外旅遊">海外旅遊</option>
+                <option value="國內旅遊">國內旅遊</option>
+                <option value="健康旅遊">健康旅遊</option>
+                <option value="療癒體驗">療癒體驗</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="row-2">
+            <div class="form-group">
+              <label class="field-label">活動費用 (NT$) *</label>
+              <input class="field-input" type="number" id="act_fee" placeholder="28800">
+            </div>
+            <div class="form-group">
+              <label class="field-label">名額上限 *</label>
+              <input class="field-input" type="number" id="act_quota" placeholder="20">
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label class="field-label">行程亮點（選填，給 AI 參考）</label>
+            <textarea class="field-input" id="act_highlights" rows="3"
+              placeholder="例：搭乘傳統木船、日落晚宴、SPA療癒、有機農場體驗…"></textarea>
+          </div>
+
+          <button class="btn btn-gold btn-full" onclick="generateWithAI()">
+            ✨ AI 協作生成文案
+          </button>
+
+          <!-- AI 預覽 -->
+          <div class="ai-preview" id="aiPreview">
+            <h4>🤖 AI 生成預覽</h4>
+            <div id="aiContent"></div>
+          </div>
+
+          <!-- 確認寫入 -->
+          <div id="confirmArea" style="display:none;margin-top:16px">
+            <div class="section-divider">✦ 確認後寫入系統 ✦</div>
+            <div class="form-group">
+              <label class="field-label">活動代碼（系統自動產生，可修改）</label>
+              <input class="field-input" id="act_code" placeholder="TR002">
+            </div>
+            <button class="btn btn-navy btn-full" onclick="saveActivity()">
+              ✅ 確認寫入活動主檔
+            </button>
+          </div>
+
+        </div>
+      </div>
     </div>
 
   </div>
@@ -358,8 +494,8 @@
     <h3>📋 LINE 複製文案</h3>
     <div class="copy-text" id="copyText"></div>
     <div class="modal-btns">
-      <button class="btn btn-copy btn-full" onclick="copyToClipboard()">複製文案</button>
-      <button class="btn btn-full" style="background:#e5e7eb;color:#374151" onclick="closeModal()">關閉</button>
+      <button class="btn btn-copy" style="flex:1" onclick="copyToClipboard()">複製文案</button>
+      <button class="btn" style="flex:1;background:#e5e7eb;color:#374151" onclick="closeModal()">關閉</button>
     </div>
   </div>
 </div>
@@ -368,8 +504,9 @@
 
 <script>
 const GAS_URL = 'https://script.google.com/macros/s/AKfycbyQyVKmbN5H1pN0rZJvD2SOMk7xnkrVBOFZSGFCmMbCjaw6neW93U6eWbFFRiaxfeGq0w/exec';
+const CLAUDE_API = 'https://api.anthropic.com/v1/messages';
 let ADMIN_PWD = '';
-let allData = [];
+let generatedData = {};
 
 function showToast(msg, type = '') {
   const t = document.getElementById('toast');
@@ -403,14 +540,13 @@ function doLogin() {
 
 function doLogout() {
   ADMIN_PWD = '';
-  document.getElementById('loginScreen').style.display = 'flex';
-  document.getElementById('adminScreen').style.display = 'none';
-  document.getElementById('pwdInput').value = '';
+  location.reload();
 }
 
 function switchTab(tab) {
+  const tabs = ['pending','all','payment','newActivity'];
   document.querySelectorAll('.tab').forEach((t, i) => {
-    t.classList.toggle('active', ['pending','all','payment'][i] === tab);
+    t.classList.toggle('active', tabs[i] === tab);
   });
   document.querySelectorAll('.section-tab').forEach(s => s.classList.remove('active'));
   document.getElementById('tab-' + tab).classList.add('active');
@@ -424,17 +560,10 @@ async function loadPending() {
   try {
     const data = await gasGet({ action: 'getPending' });
     if (data.error) { showToast(data.error, 'error'); return; }
-
-    document.getElementById('pendingBadge').textContent = data.length ? `（${data.length}）` : '';
-    document.getElementById('statRow').innerHTML = `
-      <div class="stat-card"><div class="num">${data.length}</div><div class="label">待確認</div></div>
-    `;
-
     if (!data.length) {
       document.getElementById('pendingList').innerHTML = '<div class="empty">✅ 目前沒有待確認的登記</div>';
       return;
     }
-
     document.getElementById('pendingList').innerHTML = data.map(d => `
       <div class="card">
         <div class="card-header">
@@ -449,136 +578,229 @@ async function loadPending() {
             <div class="info-item"><div class="key">姓名</div><div class="val">${d.name}</div></div>
             <div class="info-item"><div class="key">性別</div><div class="val">${d.gender}</div></div>
             <div class="info-item"><div class="key">手機</div><div class="val">${d.phone}</div></div>
-            <div class="info-item"><div class="key">LINE ID</div><div class="val">${d.lineId || '—'}</div></div>
+            <div class="info-item"><div class="key">LINE ID</div><div class="val">${d.lineId||'—'}</div></div>
             <div class="info-item"><div class="key">Email</div><div class="val">${d.email}</div></div>
             <div class="info-item"><div class="key">活動</div><div class="val">${d.activityCode} ${d.activityName}</div></div>
           </div>
           <div class="action-row">
-            <button class="btn btn-approve" onclick="approve('${d.regNo}', '${d.name}', '${d.activityName}')">✅ 確認同行</button>
-            <button class="btn btn-reject" onclick="reject('${d.regNo}', '${d.name}', '${d.activityName}')">❌ 無法同行</button>
+            <button class="btn btn-approve" onclick="approve('${d.regNo}')">✅ 確認同行</button>
+            <button class="btn btn-reject" onclick="reject('${d.regNo}')">❌ 無法同行</button>
           </div>
         </div>
-      </div>
-    `).join('');
-  } catch(e) {
-    showToast('載入失敗', 'error');
-  }
+      </div>`).join('');
+  } catch(e) { showToast('載入失敗', 'error'); }
 }
 
 async function loadAll() {
   document.getElementById('allList').innerHTML = '<div class="empty">載入中…</div>';
   try {
     const data = await gasGet({ action: 'getAll' });
-    if (data.error) { showToast(data.error, 'error'); return; }
-    if (!data.length) {
-      document.getElementById('allList').innerHTML = '<div class="empty">尚無登記資料</div>';
-      return;
-    }
+    if (!data.length) { document.getElementById('allList').innerHTML = '<div class="empty">尚無登記資料</div>'; return; }
     document.getElementById('allList').innerHTML = data.map(d => {
-      const badgeClass = d.status === '確認同行' ? 'approved' : d.status === '無法同行' ? 'rejected' : 'pending';
-      return `
-        <div class="card">
-          <div class="card-header">
-            <div>
-              <span class="reg-no">${d.regNo}</span>
-              <span class="badge ${badgeClass}" style="margin-left:8px">${d.status}</span>
-            </div>
-            <div class="time">${d.activityCode}</div>
-          </div>
-          <div class="card-body">
-            <div class="info-grid">
-              <div class="info-item"><div class="key">姓名</div><div class="val">${d.name}</div></div>
-              <div class="info-item"><div class="key">手機</div><div class="val">${d.phone}</div></div>
-              <div class="info-item"><div class="key">Email</div><div class="val">${d.email}</div></div>
-              <div class="info-item"><div class="key">登記時間</div><div class="val">${d.time.substring(0,10)}</div></div>
-            </div>
+      const bc = d.status==='確認同行'?'approved':d.status==='無法同行'?'rejected':'pending';
+      return `<div class="card">
+        <div class="card-header">
+          <div><span class="reg-no">${d.regNo}</span><span class="badge ${bc}" style="margin-left:8px">${d.status}</span></div>
+          <div class="time">${d.activityCode}</div>
+        </div>
+        <div class="card-body">
+          <div class="info-grid">
+            <div class="info-item"><div class="key">姓名</div><div class="val">${d.name}</div></div>
+            <div class="info-item"><div class="key">手機</div><div class="val">${d.phone}</div></div>
+            <div class="info-item"><div class="key">Email</div><div class="val">${d.email}</div></div>
+            <div class="info-item"><div class="key">登記時間</div><div class="val">${d.time.substring(0,10)}</div></div>
           </div>
         </div>
-      `;
+      </div>`;
     }).join('');
-  } catch(e) {
-    showToast('載入失敗', 'error');
-  }
+  } catch(e) { showToast('載入失敗','error'); }
 }
 
 async function loadPayment() {
   document.getElementById('paymentList').innerHTML = '<div class="empty">載入中…</div>';
   try {
     const data = await gasGet({ action: 'getPayments' });
-    if (data.error) { showToast(data.error, 'error'); return; }
-    if (!data.length) {
-      document.getElementById('paymentList').innerHTML = '<div class="empty">尚無待對帳資料</div>';
-      return;
-    }
+    if (!data.length) { document.getElementById('paymentList').innerHTML = '<div class="empty">尚無待對帳資料</div>'; return; }
     document.getElementById('paymentList').innerHTML = data.map(d => `
       <div class="payment-card">
-        <div class="payment-row">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px">
           <div>
             <div style="font-weight:700;color:var(--navy)">${d.regNo} ${d.name}</div>
-            <div style="font-size:12px;color:var(--gray);margin-top:2px">${d.activityCode} · ${d.feeType}</div>
+            <div style="font-size:12px;color:var(--gray);margin-top:2px">${d.activityCode} · ${d.feeType||''}</div>
           </div>
-          <div class="badge ${d.payStatus === '訂金待對帳' || d.payStatus === '尾款待對帳' ? 'pending' : 'approved'}">${d.payStatus}</div>
+          <span class="badge pending">${d.payStatus}</span>
         </div>
-        <div class="payment-row">
-          <div>
-            <div style="font-size:12px;color:var(--gray)">末五碼</div>
-            <div class="last5">${d.last5 || '—'}</div>
-          </div>
-          <div>
-            <div style="font-size:12px;color:var(--gray);margin-bottom:4px">金額</div>
-            <div style="font-size:15px;font-weight:700">NT$ ${d.amount || '—'}</div>
-          </div>
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
+          <div><div style="font-size:11px;color:var(--gray)">末五碼</div><div class="last5">${d.last5||'—'}</div></div>
+          <div><div style="font-size:11px;color:var(--gray)">金額</div><div style="font-size:15px;font-weight:700">NT$ ${d.amount||'—'}</div></div>
         </div>
-        <div class="action-row">
-          <button class="btn btn-approve btn-sm" onclick="confirmPayment('${d.regNo}', '${d.feeType}')">✅ 確認收款</button>
-        </div>
-      </div>
-    `).join('');
-  } catch(e) {
-    showToast('載入失敗', 'error');
-  }
+        <button class="btn btn-approve btn-sm" onclick="confirmPayment('${d.regNo}','${d.feeType}')">✅ 確認收款</button>
+      </div>`).join('');
+  } catch(e) { showToast('載入失敗','error'); }
 }
 
-async function approve(regNo, name, activityName) {
-  if (!confirm(`確認【${name}】同行？\n確認後將自動寄送通知信。`)) return;
-  try {
-    const data = await gasPost({ action: 'approve', regNo });
-    if (data.success) {
-      showToast('✅ 已確認同行', 'success');
-      showCopyModal(data.copyText);
-      loadPending();
-    } else {
-      showToast(data.error || '操作失敗', 'error');
-    }
-  } catch(e) { showToast('操作失敗', 'error'); }
+async function approve(regNo) {
+  if (!confirm(`確認同行？`)) return;
+  const data = await gasPost({ action: 'approve', regNo });
+  if (data.success) { showToast('✅ 已確認同行', 'success'); showCopyModal(data.copyText); loadPending(); }
+  else showToast(data.error||'失敗','error');
 }
 
-async function reject(regNo, name, activityName) {
-  const reason = prompt(`【${name}】無法同行原因：\n（留空則預設：本次活動名額已滿）`);
+async function reject(regNo) {
+  const reason = prompt('無法同行原因：');
   if (reason === null) return;
-  try {
-    const data = await gasPost({ action: 'reject', regNo, reason: reason || '本次活動名額已滿' });
-    if (data.success) {
-      showToast('已通知無法同行');
-      showCopyModal(data.copyText);
-      loadPending();
-    } else {
-      showToast(data.error || '操作失敗', 'error');
-    }
-  } catch(e) { showToast('操作失敗', 'error'); }
+  const data = await gasPost({ action: 'reject', regNo, reason: reason||'本次活動名額已滿' });
+  if (data.success) { showToast('已通知'); showCopyModal(data.copyText); loadPending(); }
+  else showToast(data.error||'失敗','error');
 }
 
 async function confirmPayment(regNo, feeType) {
-  if (!confirm(`確認收款？\n登記編號：${regNo}\n類型：${feeType}`)) return;
+  if (!confirm(`確認收款？`)) return;
+  const data = await gasPost({ action: 'confirmPayment', regNo, feeType });
+  if (data.success) { showToast('✅ 對帳完成','success'); loadPayment(); }
+  else showToast(data.error||'失敗','error');
+}
+
+// ── AI 生成活動文案 ────────────────────────────────
+async function generateWithAI() {
+  const name = document.getElementById('act_name').value.trim();
+  const start = document.getElementById('act_start').value;
+  const end = document.getElementById('act_end').value;
+  const location = document.getElementById('act_location').value.trim();
+  const type = document.getElementById('act_type').value;
+  const fee = document.getElementById('act_fee').value;
+  const quota = document.getElementById('act_quota').value;
+  const highlights = document.getElementById('act_highlights').value.trim();
+
+  if (!name || !start || !end || !location || !fee || !quota) {
+    showToast('請填寫所有必填欄位', 'error'); return;
+  }
+
+  const days = calcDays(start, end);
+  const preview = document.getElementById('aiPreview');
+  const content = document.getElementById('aiContent');
+  preview.classList.add('show');
+  content.innerHTML = '<div class="ai-loading"><div class="ai-spinner"></div>AI 生成中，請稍候…</div>';
+  document.getElementById('confirmArea').style.display = 'none';
+
+  const prompt = `你是天使幸福旅居的品牌文案師，風格溫暖、有質感、適合台灣中年女性。
+
+請根據以下活動資料，生成三份內容，用JSON格式回傳，不要有markdown符號：
+
+活動名稱：${name}
+活動類型：${type}
+出發日期：${start}
+回程日期：${end}
+天數：${days}
+目的地：${location}
+費用：NT$${fee}
+名額：${quota}人
+行程亮點：${highlights || '請自行發揮'}
+
+請回傳以下JSON格式：
+{
+  "activityDesc": "活動介紹（3-4句，溫暖有畫面感）",
+  "linePost": "LINE招募文案（含emoji，適合發在LINE群組，200字內）",
+  "earlyBirdNote": "早鳥優惠說明（1-2句，製造急迫感）"
+}`;
+
   try {
-    const data = await gasPost({ action: 'confirmPayment', regNo, feeType });
-    if (data.success) {
-      showToast('✅ 對帳完成', 'success');
-      loadPayment();
-    } else {
-      showToast(data.error || '操作失敗', 'error');
-    }
-  } catch(e) { showToast('操作失敗', 'error'); }
+    const res = await fetch(CLAUDE_API, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        model: 'claude-sonnet-4-20250514',
+        max_tokens: 1000,
+        messages: [{ role: 'user', content: prompt }]
+      })
+    });
+
+    const data = await res.json();
+    const text = data.content[0].text.replace(/```json|```/g,'').trim();
+    const parsed = JSON.parse(text);
+
+    generatedData = { name, start, end, location, type, fee, quota, days, ...parsed };
+
+    // 自動產生活動代碼
+    const nextCode = await getNextActivityCode();
+    document.getElementById('act_code').value = nextCode;
+
+    content.innerHTML = `
+      <div class="preview-label">活動介紹</div>
+      <div class="preview-section">${parsed.activityDesc}</div>
+      <div class="preview-label">LINE 招募文案</div>
+      <div class="preview-section">${parsed.linePost}</div>
+      <div class="preview-label">早鳥優惠說明</div>
+      <div class="preview-section">${parsed.earlyBirdNote}</div>
+      <div style="display:flex;gap:8px;margin-top:12px">
+        <button class="btn btn-copy btn-sm" onclick="copySection('linePost')">複製 LINE 文案</button>
+        <button class="btn btn-copy btn-sm" onclick="copySection('activityDesc')">複製活動介紹</button>
+      </div>`;
+
+    document.getElementById('confirmArea').style.display = 'block';
+    showToast('✅ AI 生成完成！', 'success');
+
+  } catch(e) {
+    content.innerHTML = '<div class="ai-loading">生成失敗，請重試</div>';
+    showToast('AI 生成失敗', 'error');
+  }
+}
+
+async function getNextActivityCode() {
+  try {
+    const data = await gasGet({ action: 'getAll' });
+    const codes = (data || []).map(d => d.activityCode).filter(c => c && c.startsWith('TR'));
+    let max = 0;
+    codes.forEach(c => {
+      const n = parseInt(c.replace('TR',''));
+      if (n > max) max = n;
+    });
+    return 'TR' + String(max + 1).padStart(3, '0');
+  } catch(e) { return 'TR002'; }
+}
+
+function calcDays(start, end) {
+  const d1 = new Date(start), d2 = new Date(end);
+  const diff = Math.round((d2 - d1) / (1000*60*60*24));
+  return `${diff+1}天${diff}夜`;
+}
+
+async function saveActivity() {
+  const code = document.getElementById('act_code').value.trim().toUpperCase();
+  if (!code) { showToast('請填入活動代碼', 'error'); return; }
+
+  const payload = {
+    action: 'addActivity',
+    code,
+    name: generatedData.name,
+    type: generatedData.type,
+    startDate: generatedData.start,
+    endDate: generatedData.end,
+    days: generatedData.days,
+    location: generatedData.location,
+    fee: generatedData.fee,
+    quota: generatedData.quota,
+    desc: generatedData.activityDesc
+  };
+
+  const data = await gasPost(payload);
+  if (data.success) {
+    showToast('✅ 活動已寫入系統！', 'success');
+    document.getElementById('confirmArea').style.display = 'none';
+    document.getElementById('aiPreview').classList.remove('show');
+    // 清空表單
+    ['act_name','act_start','act_end','act_location','act_fee','act_quota','act_highlights'].forEach(id => {
+      document.getElementById(id).value = '';
+    });
+  } else {
+    showToast(data.error || '寫入失敗', 'error');
+  }
+}
+
+function copySection(key) {
+  navigator.clipboard.writeText(generatedData[key] || '').then(() => {
+    showToast('✅ 已複製', 'success');
+  });
 }
 
 function showCopyModal(text) {
@@ -591,8 +813,7 @@ function closeModal() {
 }
 
 function copyToClipboard() {
-  const text = document.getElementById('copyText').textContent;
-  navigator.clipboard.writeText(text).then(() => {
+  navigator.clipboard.writeText(document.getElementById('copyText').textContent).then(() => {
     showToast('✅ 已複製到剪貼簿', 'success');
     closeModal();
   });
