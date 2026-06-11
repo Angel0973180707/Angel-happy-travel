@@ -1,0 +1,529 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>✈️ 幸福旅居｜活動登記</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@400;700&family=Noto+Sans+TC:wght@300;400;500&display=swap');
+
+  :root {
+    --navy: #1a3a5c;
+    --gold: #c9a84c;
+    --cream: #faf8f3;
+    --white: #ffffff;
+    --gray: #6b7280;
+    --light: #f0ede6;
+    --red: #dc2626;
+    --green: #16a34a;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Noto Sans TC', sans-serif;
+    background: var(--cream);
+    color: #1f2937;
+    min-height: 100vh;
+  }
+
+  header {
+    background: var(--navy);
+    padding: 28px 24px 24px;
+    text-align: center;
+  }
+
+  header .brand {
+    font-family: 'Noto Serif TC', serif;
+    font-size: 13px;
+    letter-spacing: 4px;
+    color: var(--gold);
+    text-transform: uppercase;
+    margin-bottom: 8px;
+  }
+
+  header h1 {
+    font-family: 'Noto Serif TC', serif;
+    font-size: 26px;
+    color: var(--white);
+    font-weight: 700;
+    letter-spacing: 1px;
+  }
+
+  header p {
+    margin-top: 8px;
+    font-size: 13px;
+    color: rgba(255,255,255,0.6);
+    letter-spacing: 1px;
+  }
+
+  .container {
+    max-width: 640px;
+    margin: 0 auto;
+    padding: 32px 20px 60px;
+  }
+
+  .section-title {
+    font-family: 'Noto Serif TC', serif;
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--navy);
+    letter-spacing: 2px;
+    border-left: 3px solid var(--gold);
+    padding-left: 10px;
+    margin: 32px 0 16px;
+  }
+
+  .form-group {
+    margin-bottom: 18px;
+  }
+
+  label {
+    display: block;
+    font-size: 13px;
+    font-weight: 500;
+    color: #374151;
+    margin-bottom: 6px;
+  }
+
+  label .required {
+    color: var(--red);
+    margin-left: 3px;
+  }
+
+  label .hint {
+    font-weight: 300;
+    color: var(--gray);
+    font-size: 12px;
+    margin-left: 4px;
+  }
+
+  input, select, textarea {
+    width: 100%;
+    padding: 11px 14px;
+    border: 1.5px solid #d1d5db;
+    border-radius: 8px;
+    font-size: 15px;
+    font-family: 'Noto Sans TC', sans-serif;
+    background: var(--white);
+    color: #1f2937;
+    transition: border-color 0.2s;
+    -webkit-appearance: none;
+  }
+
+  input:focus, select:focus, textarea:focus {
+    outline: none;
+    border-color: var(--navy);
+  }
+
+  textarea { resize: vertical; min-height: 80px; }
+
+  .row-2 {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+  }
+
+  .checkbox-group {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .checkbox-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 14px;
+    cursor: pointer;
+  }
+
+  .checkbox-item input[type="checkbox"] {
+    width: 18px;
+    height: 18px;
+    flex-shrink: 0;
+    accent-color: var(--navy);
+  }
+
+  .radio-group {
+    display: flex;
+    gap: 16px;
+    flex-wrap: wrap;
+  }
+
+  .radio-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 14px;
+    cursor: pointer;
+  }
+
+  .radio-item input[type="radio"] {
+    width: 18px;
+    height: 18px;
+    accent-color: var(--navy);
+  }
+
+  .divider {
+    height: 1px;
+    background: #e5e7eb;
+    margin: 8px 0;
+  }
+
+  .consent-box {
+    background: var(--light);
+    border-radius: 10px;
+    padding: 16px;
+    margin-top: 8px;
+  }
+
+  .consent-box .checkbox-item {
+    font-size: 13px;
+    color: #374151;
+    line-height: 1.5;
+  }
+
+  .submit-btn {
+    width: 100%;
+    padding: 16px;
+    background: var(--navy);
+    color: var(--white);
+    border: none;
+    border-radius: 10px;
+    font-size: 16px;
+    font-family: 'Noto Sans TC', sans-serif;
+    font-weight: 500;
+    letter-spacing: 2px;
+    cursor: pointer;
+    margin-top: 28px;
+    transition: background 0.2s;
+  }
+
+  .submit-btn:hover { background: #152e4a; }
+  .submit-btn:disabled { background: #9ca3af; cursor: not-allowed; }
+
+  .footer-text {
+    text-align: center;
+    margin-top: 20px;
+    font-size: 12px;
+    color: var(--gray);
+    line-height: 1.8;
+  }
+
+  /* Toast */
+  .toast {
+    display: none;
+    position: fixed;
+    top: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: var(--navy);
+    color: white;
+    padding: 14px 24px;
+    border-radius: 10px;
+    font-size: 14px;
+    z-index: 999;
+    text-align: center;
+    max-width: 320px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.2);
+  }
+
+  .toast.success { background: var(--green); }
+  .toast.error { background: var(--red); }
+  .toast.show { display: block; }
+
+  /* Success screen */
+  .success-screen {
+    display: none;
+    text-align: center;
+    padding: 60px 20px;
+  }
+
+  .success-screen .icon {
+    font-size: 56px;
+    margin-bottom: 20px;
+  }
+
+  .success-screen h2 {
+    font-family: 'Noto Serif TC', serif;
+    font-size: 22px;
+    color: var(--navy);
+    margin-bottom: 12px;
+  }
+
+  .success-screen p {
+    font-size: 14px;
+    color: var(--gray);
+    line-height: 1.8;
+  }
+
+  .success-screen .reg-no {
+    display: inline-block;
+    margin-top: 20px;
+    padding: 12px 24px;
+    background: var(--light);
+    border-radius: 8px;
+    font-size: 18px;
+    font-weight: 700;
+    color: var(--navy);
+    letter-spacing: 2px;
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="brand">幸福旅居 · Happy Travel</div>
+  <h1>活動同行登記</h1>
+  <p>請確實填寫，以利確認名額</p>
+</header>
+
+<div class="container">
+
+  <!-- Success Screen -->
+  <div class="success-screen" id="successScreen">
+    <div class="icon">✈️</div>
+    <h2>登記資料已送出</h2>
+    <p>感謝您的登記！<br>我們正在確認同行名額，<br>結果將以 Email 通知您。</p>
+    <div class="reg-no" id="successRegNo"></div>
+    <p style="margin-top:16px;font-size:12px;">請保持手機與 LINE 暢通</p>
+  </div>
+
+  <!-- Form -->
+  <form id="regForm">
+
+    <div class="section-title">活動資訊</div>
+
+    <div class="form-group">
+      <label>活動代碼 <span class="required">*</span> <span class="hint">注意英文字母大小寫，例：TR001</span></label>
+      <input type="text" id="activityCode" placeholder="請填入活動代碼" required>
+    </div>
+
+    <div class="section-title">基本資料</div>
+
+    <div class="row-2">
+      <div class="form-group">
+        <label>姓名 <span class="required">*</span></label>
+        <input type="text" id="name" placeholder="真實姓名" required>
+      </div>
+      <div class="form-group">
+        <label>性別 <span class="required">*</span></label>
+        <select id="gender" required>
+          <option value="">請選擇</option>
+          <option>男</option>
+          <option>女</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="row-2">
+      <div class="form-group">
+        <label>出生日期 <span class="required">*</span></label>
+        <input type="date" id="birthday" required>
+      </div>
+      <div class="form-group">
+        <label>身分證字號 <span class="required">*</span></label>
+        <input type="text" id="idNo" placeholder="A123456789" required>
+      </div>
+    </div>
+
+    <div class="row-2">
+      <div class="form-group">
+        <label>手機 <span class="required">*</span></label>
+        <input type="tel" id="phone" placeholder="0912345678" required>
+      </div>
+      <div class="form-group">
+        <label>LINE ID</label>
+        <input type="text" id="lineId" placeholder="選填">
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label>Email <span class="required">*</span> <span class="hint">若無 Email 請填負責人 Email 代收</span></label>
+      <input type="email" id="email" placeholder="example@gmail.com" required>
+    </div>
+
+    <div class="form-group">
+      <label>地址</label>
+      <input type="text" id="address" placeholder="選填">
+    </div>
+
+    <div class="section-title">護照資料</div>
+
+    <div class="row-2">
+      <div class="form-group">
+        <label>護照英文姓名 <span class="required">*</span></label>
+        <input type="text" id="passportName" placeholder="如：CHEN HSIU FANG" required>
+      </div>
+      <div class="form-group">
+        <label>護照號碼 <span class="required">*</span></label>
+        <input type="text" id="passportNo" placeholder="如：123456789" required>
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label>護照到期日 <span class="required">*</span> <span class="hint">需距出發日 6 個月以上</span></label>
+      <input type="date" id="passportExpiry" required>
+    </div>
+
+    <div class="section-title">住宿與飲食</div>
+
+    <div class="form-group">
+      <label>房型需求 <span class="hint">如：單人房 / 雙人房（同伴：王小明）</span></label>
+      <input type="text" id="roomType" placeholder="選填，請說明需求">
+    </div>
+
+    <div class="form-group">
+      <label>飲食需求</label>
+      <div class="checkbox-group">
+        <label class="checkbox-item"><input type="checkbox" name="food" value="葷食"> 葷食</label>
+        <label class="checkbox-item"><input type="checkbox" name="food" value="素食"> 素食</label>
+        <label class="checkbox-item"><input type="checkbox" name="food" value="海鮮過敏"> 海鮮過敏</label>
+        <label class="checkbox-item"><input type="checkbox" name="food" value="其他"> 其他（請於特殊需求說明）</label>
+      </div>
+    </div>
+
+    <div class="section-title">健康狀況</div>
+
+    <div class="form-group">
+      <label>是否可正常步行 <span class="required">*</span></label>
+      <div class="radio-group">
+        <label class="radio-item"><input type="radio" name="walking" value="是" required> 是</label>
+        <label class="radio-item"><input type="radio" name="walking" value="否"> 否（請於特殊需求說明）</label>
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label>慢性疾病或用藥狀況</label>
+      <textarea id="chronic" placeholder="選填，如有請說明"></textarea>
+    </div>
+
+    <div class="form-group">
+      <label>特殊需求</label>
+      <textarea id="special" placeholder="選填，任何特殊需求請說明"></textarea>
+    </div>
+
+    <div class="section-title">緊急聯絡人</div>
+
+    <div class="row-2">
+      <div class="form-group">
+        <label>緊急聯絡人 <span class="required">*</span></label>
+        <input type="text" id="emergencyName" placeholder="姓名" required>
+      </div>
+      <div class="form-group">
+        <label>關係 <span class="required">*</span></label>
+        <input type="text" id="emergencyRel" placeholder="如：配偶、子女" required>
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label>緊急聯絡電話 <span class="required">*</span></label>
+      <input type="tel" id="emergencyPhone" placeholder="0912345678" required>
+    </div>
+
+    <div class="section-title">同意聲明</div>
+
+    <div class="consent-box">
+      <div class="form-group" style="margin-bottom:12px;">
+        <label class="checkbox-item">
+          <input type="checkbox" id="consent1" required>
+          我同意個人資料僅供本次活動使用
+        </label>
+      </div>
+      <div class="form-group" style="margin-bottom:0;">
+        <label class="checkbox-item">
+          <input type="checkbox" id="consent2" required>
+          我已詳閱行程內容與活動說明，並同意參與
+        </label>
+      </div>
+    </div>
+
+    <button type="submit" class="submit-btn" id="submitBtn">送出登記</button>
+
+    <p class="footer-text">
+      生命是一場旅居<br>
+      最美的風景在路上，最好的時光與好友同行<br><br>
+      ── 幸福旅居 召集人
+    </p>
+
+  </form>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+const GAS_URL = 'https://script.google.com/macros/s/AKfycbyQyVKmbN5H1pN0rZJvD2SOMk7xnkrVBOFZSGFCmMbCjaw6neW93U6eWbFFRiaxfeGq0w/exec';
+
+function showToast(msg, type = '') {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.className = 'toast show ' + type;
+  setTimeout(() => t.className = 'toast', 3500);
+}
+
+document.getElementById('regForm').addEventListener('submit', async function(e) {
+  e.preventDefault();
+
+  const foods = [...document.querySelectorAll('input[name="food"]:checked')].map(x => x.value).join('、');
+  const walking = document.querySelector('input[name="walking"]:checked');
+
+  if (!walking) { showToast('請選擇是否可正常步行', 'error'); return; }
+  if (!document.getElementById('consent1').checked || !document.getElementById('consent2').checked) {
+    showToast('請勾選同意聲明', 'error'); return;
+  }
+
+  const btn = document.getElementById('submitBtn');
+  btn.disabled = true;
+  btn.textContent = '送出中…';
+
+  const payload = {
+    action: 'register',
+    activityCode: document.getElementById('activityCode').value.trim().toUpperCase(),
+    name: document.getElementById('name').value.trim(),
+    gender: document.getElementById('gender').value,
+    birthday: document.getElementById('birthday').value,
+    idNo: document.getElementById('idNo').value.trim(),
+    phone: document.getElementById('phone').value.trim(),
+    lineId: document.getElementById('lineId').value.trim(),
+    email: document.getElementById('email').value.trim(),
+    address: document.getElementById('address').value.trim(),
+    passportName: document.getElementById('passportName').value.trim(),
+    passportNo: document.getElementById('passportNo').value.trim(),
+    passportExpiry: document.getElementById('passportExpiry').value,
+    roomType: document.getElementById('roomType').value.trim(),
+    food: foods,
+    walking: walking.value,
+    chronic: document.getElementById('chronic').value.trim(),
+    special: document.getElementById('special').value.trim(),
+    emergencyName: document.getElementById('emergencyName').value.trim(),
+    emergencyRel: document.getElementById('emergencyRel').value.trim(),
+    emergencyPhone: document.getElementById('emergencyPhone').value.trim()
+  };
+
+  try {
+    const res = await fetch(GAS_URL, {
+      method: 'POST',
+      body: JSON.stringify(payload)
+    });
+    const data = await res.json();
+
+    if (data.success) {
+      document.getElementById('regForm').style.display = 'none';
+      const s = document.getElementById('successScreen');
+      s.style.display = 'block';
+      document.getElementById('successRegNo').textContent = '登記編號：' + data.regNo;
+    } else {
+      showToast(data.error || '送出失敗，請重試', 'error');
+      btn.disabled = false;
+      btn.textContent = '送出登記';
+    }
+  } catch (err) {
+    showToast('網路錯誤，請重試', 'error');
+    btn.disabled = false;
+    btn.textContent = '送出登記';
+  }
+});
+</script>
+</body>
+</html>
