@@ -1,0 +1,448 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>天使幸福旅居｜Angel Happy Travel</title>
+<meta property="og:title" content="天使幸福旅居｜Angel Happy Travel">
+<meta property="og:description" content="生命是一場旅居，最美的風景在路上，最好的時光與好友同行。">
+<meta property="og:image" content="logo.png">
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@400;700&family=Noto+Sans+TC:wght@300;400;500&display=swap');
+
+  :root {
+    --navy: #1a3a5c;
+    --gold: #c9a84c;
+    --gold-light: #e8d5a3;
+    --cream: #faf8f3;
+    --white: #ffffff;
+    --gray: #6b7280;
+    --light: #f0ede6;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Noto Sans TC', sans-serif;
+    background: var(--cream);
+    color: #1f2937;
+  }
+
+  /* Hero */
+  .hero {
+    background: linear-gradient(160deg, #0d2238 0%, #1a3a5c 60%, #1e4a7a 100%);
+    padding: 48px 24px 56px;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .hero::before {
+    content: '';
+    position: absolute;
+    top: -40px; right: -40px;
+    width: 200px; height: 200px;
+    background: radial-gradient(circle, rgba(201,168,76,0.15) 0%, transparent 70%);
+    border-radius: 50%;
+  }
+
+  .hero::after {
+    content: '';
+    position: absolute;
+    bottom: -20px; left: -20px;
+    width: 150px; height: 150px;
+    background: radial-gradient(circle, rgba(201,168,76,0.1) 0%, transparent 70%);
+    border-radius: 50%;
+  }
+
+  .hero-logo {
+    width: 140px;
+    height: 140px;
+    object-fit: contain;
+    margin-bottom: 16px;
+    filter: drop-shadow(0 4px 20px rgba(201,168,76,0.4));
+  }
+
+  .hero-brand {
+    font-family: 'Noto Serif TC', serif;
+    font-size: 28px;
+    color: var(--white);
+    font-weight: 700;
+    letter-spacing: 3px;
+    margin-bottom: 6px;
+  }
+
+  .hero-en {
+    font-size: 12px;
+    color: var(--gold);
+    letter-spacing: 5px;
+    margin-bottom: 20px;
+  }
+
+  .hero-tagline {
+    font-size: 13px;
+    color: rgba(255,255,255,0.7);
+    line-height: 2;
+    letter-spacing: 1px;
+  }
+
+  .gold-line {
+    width: 48px;
+    height: 2px;
+    background: var(--gold);
+    margin: 16px auto;
+    opacity: 0.6;
+  }
+
+  /* Main */
+  .container {
+    max-width: 640px;
+    margin: 0 auto;
+    padding: 0 16px 80px;
+  }
+
+  .section-label {
+    text-align: center;
+    font-size: 11px;
+    letter-spacing: 4px;
+    color: var(--gold);
+    margin: 36px 0 16px;
+    text-transform: uppercase;
+  }
+
+  /* Loading */
+  .loading {
+    text-align: center;
+    padding: 48px;
+    color: var(--gray);
+    font-size: 14px;
+  }
+
+  .spinner {
+    width: 32px;
+    height: 32px;
+    border: 3px solid #e5e7eb;
+    border-top-color: var(--navy);
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+    margin: 0 auto 12px;
+  }
+
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  /* Activity Card */
+  .activity-card {
+    background: var(--white);
+    border-radius: 16px;
+    overflow: hidden;
+    margin-bottom: 20px;
+    box-shadow: 0 4px 20px rgba(26,58,92,0.08);
+    border: 1px solid rgba(201,168,76,0.15);
+  }
+
+  .card-top {
+    background: linear-gradient(135deg, var(--navy) 0%, #1e4a7a 100%);
+    padding: 20px 22px 18px;
+    position: relative;
+  }
+
+  .card-status {
+    display: inline-block;
+    padding: 3px 10px;
+    border-radius: 20px;
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 1px;
+    margin-bottom: 10px;
+  }
+
+  .status-open { background: rgba(201,168,76,0.25); color: var(--gold-light); }
+  .status-full { background: rgba(220,38,38,0.25); color: #fca5a5; }
+  .status-closed { background: rgba(107,114,128,0.25); color: #d1d5db; }
+
+  .card-title {
+    font-family: 'Noto Serif TC', serif;
+    font-size: 20px;
+    color: var(--white);
+    font-weight: 700;
+    line-height: 1.4;
+    margin-bottom: 6px;
+  }
+
+  .card-subtitle {
+    font-size: 12px;
+    color: rgba(255,255,255,0.6);
+    letter-spacing: 1px;
+  }
+
+  .card-body { padding: 18px 22px; }
+
+  .info-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    margin-bottom: 16px;
+  }
+
+  .info-item {}
+  .info-item .key {
+    font-size: 11px;
+    color: var(--gray);
+    letter-spacing: 1px;
+    margin-bottom: 3px;
+  }
+  .info-item .val {
+    font-size: 14px;
+    color: #1f2937;
+    font-weight: 500;
+  }
+
+  .fee-row {
+    display: flex;
+    align-items: baseline;
+    gap: 6px;
+    margin-bottom: 4px;
+  }
+
+  .fee-amount {
+    font-family: 'Noto Serif TC', serif;
+    font-size: 26px;
+    font-weight: 700;
+    color: var(--navy);
+  }
+
+  .fee-unit { font-size: 13px; color: var(--gray); }
+
+  .quota-bar {
+    background: #f3f4f6;
+    border-radius: 4px;
+    height: 6px;
+    margin-bottom: 6px;
+    overflow: hidden;
+  }
+
+  .quota-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--gold), #e8a020);
+    border-radius: 4px;
+    transition: width 0.6s ease;
+  }
+
+  .quota-text { font-size: 12px; color: var(--gray); }
+
+  .divider { height: 1px; background: #f3f4f6; margin: 14px 0; }
+
+  .btn-register {
+    display: block;
+    width: 100%;
+    padding: 15px;
+    background: var(--navy);
+    color: var(--white);
+    text-align: center;
+    text-decoration: none;
+    border-radius: 10px;
+    font-size: 15px;
+    font-weight: 500;
+    letter-spacing: 2px;
+    transition: background 0.2s, transform 0.1s;
+  }
+
+  .btn-register:hover { background: #152e4a; }
+  .btn-register:active { transform: scale(0.98); }
+  .btn-register.full { background: #9ca3af; pointer-events: none; }
+
+  /* Empty */
+  .empty-state {
+    text-align: center;
+    padding: 48px 24px;
+    background: var(--white);
+    border-radius: 16px;
+  }
+
+  .empty-state .icon { font-size: 48px; margin-bottom: 16px; }
+  .empty-state h3 { font-size: 16px; color: var(--navy); margin-bottom: 8px; }
+  .empty-state p { font-size: 13px; color: var(--gray); line-height: 1.8; }
+
+  /* LINE CTA */
+  .line-cta {
+    background: var(--white);
+    border-radius: 16px;
+    padding: 24px;
+    text-align: center;
+    margin-top: 8px;
+    border: 1px solid #f3f4f6;
+  }
+
+  .line-cta p {
+    font-size: 13px;
+    color: var(--gray);
+    margin-bottom: 14px;
+    line-height: 1.8;
+  }
+
+  .btn-line {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 12px 28px;
+    background: #06C755;
+    color: white;
+    border-radius: 10px;
+    text-decoration: none;
+    font-size: 14px;
+    font-weight: 500;
+    letter-spacing: 1px;
+    transition: opacity 0.2s;
+  }
+
+  .btn-line:hover { opacity: 0.9; }
+
+  /* Footer */
+  footer {
+    background: var(--navy);
+    padding: 32px 24px;
+    text-align: center;
+  }
+
+  footer .logo-small { width: 56px; opacity: 0.8; margin-bottom: 12px; }
+
+  footer p {
+    font-size: 12px;
+    color: rgba(255,255,255,0.5);
+    line-height: 2;
+    letter-spacing: 1px;
+  }
+
+  footer .gold-text { color: var(--gold); opacity: 0.8; }
+</style>
+</head>
+<body>
+
+<!-- Hero -->
+<div class="hero">
+  <img src="logo.png" alt="天使幸福旅居" class="hero-logo">
+  <div class="hero-brand">天使幸福旅居</div>
+  <div class="hero-en">ANGEL HAPPY TRAVEL</div>
+  <div class="gold-line"></div>
+  <div class="hero-tagline">
+    生命是一場旅居<br>
+    最美的風景在路上<br>
+    最好的時光與好友同行
+  </div>
+</div>
+
+<!-- Activities -->
+<div class="container">
+  <div class="section-label">✦ 目前招募中的活動 ✦</div>
+  <div id="activityList">
+    <div class="loading">
+      <div class="spinner"></div>
+      載入活動資訊中…
+    </div>
+  </div>
+
+  <!-- LINE -->
+  <div class="line-cta">
+    <p>有任何疑問？<br>歡迎加入 LINE 官方帳號與我們聯繫</p>
+    <a href="https://lin.ee/xgnMnRky" class="btn-line" target="_blank">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="white">
+        <path d="M12 2C6.48 2 2 6.03 2 11c0 3.07 1.62 5.78 4.13 7.53L5.5 22l3.82-2.01C10.5 20.63 11.24 20.75 12 20.75c5.52 0 10-4.03 10-9s-4.48-9-10-9zm0 16.75c-.65 0-1.29-.08-1.9-.22l-2.69 1.41.67-2.52C5.94 15.96 4 13.63 4 11c0-3.86 3.58-7 8-7s8 3.14 8 7-3.58 7-8 7z"/>
+      </svg>
+      加入 LINE 洽詢
+    </a>
+  </div>
+</div>
+
+<!-- Footer -->
+<footer>
+  <img src="logo.png" alt="天使幸福旅居" class="logo-small">
+  <p class="gold-text">天使幸福旅居 · Angel Happy Travel</p>
+  <p>© 2026 All Rights Reserved</p>
+</footer>
+
+<script>
+const GAS_URL = 'https://script.google.com/macros/s/AKfycbyQyVKmbN5H1pN0rZJvD2SOMk7xnkrVBOFZSGFCmMbCjaw6neW93U6eWbFFRiaxfeGq0w/exec';
+
+async function loadActivities() {
+  try {
+    const res = await fetch(GAS_URL + '?action=getActiveEvents');
+    const data = await res.json();
+
+    if (!data || data.error || !data.length) {
+      document.getElementById('activityList').innerHTML = `
+        <div class="empty-state">
+          <div class="icon">✈️</div>
+          <h3>目前暫無招募中的活動</h3>
+          <p>請加入 LINE 官方帳號<br>第一時間收到最新活動通知</p>
+        </div>`;
+      return;
+    }
+
+    document.getElementById('activityList').innerHTML = data.map(a => {
+      const pct = a.limit > 0 ? Math.round((a.registered / a.limit) * 100) : 0;
+      const isFull = a.remaining <= 0;
+      const statusClass = isFull ? 'status-full' : 'status-open';
+      const statusText = isFull ? '名額已滿' : '招募中';
+
+      return `
+        <div class="activity-card">
+          <div class="card-top">
+            <div class="card-status ${statusClass}">${statusText}</div>
+            <div class="card-title">${a.name}</div>
+            <div class="card-subtitle">${a.type} · ${a.days}</div>
+          </div>
+          <div class="card-body">
+            <div class="info-grid">
+              <div class="info-item">
+                <div class="key">出發日期</div>
+                <div class="val">${a.startDate}</div>
+              </div>
+              <div class="info-item">
+                <div class="key">回程日期</div>
+                <div class="val">${a.endDate}</div>
+              </div>
+              <div class="info-item">
+                <div class="key">目的地</div>
+                <div class="val">${a.location}</div>
+              </div>
+              <div class="info-item">
+                <div class="key">活動代碼</div>
+                <div class="val" style="color:var(--navy);font-weight:700">${a.code}</div>
+              </div>
+            </div>
+
+            <div class="divider"></div>
+
+            <div class="fee-row">
+              <div class="fee-amount">NT$ ${Number(a.fee).toLocaleString()}</div>
+              <div class="fee-unit">/ 人</div>
+            </div>
+
+            <div class="quota-bar">
+              <div class="quota-fill" style="width:${Math.min(pct,100)}%"></div>
+            </div>
+            <div class="quota-text">剩餘名額 ${a.remaining} 位（共 ${a.limit} 位）</div>
+
+            <div style="margin-top:16px">
+              <a href="register.html?code=${a.code}"
+                class="btn-register ${isFull ? 'full' : ''}">
+                ${isFull ? '名額已滿' : '立即登記 →'}
+              </a>
+            </div>
+          </div>
+        </div>`;
+    }).join('');
+  } catch(e) {
+    document.getElementById('activityList').innerHTML = `
+      <div class="empty-state">
+        <div class="icon">⚠️</div>
+        <h3>載入失敗</h3>
+        <p>請重新整理頁面，或透過 LINE 洽詢</p>
+      </div>`;
+  }
+}
+
+loadActivities();
+</script>
+</body>
+</html>
