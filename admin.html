@@ -1,0 +1,602 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>✈️ 幸福旅居｜管理後台</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@300;400;500;700&display=swap');
+
+  :root {
+    --navy: #1a3a5c;
+    --gold: #c9a84c;
+    --cream: #faf8f3;
+    --white: #ffffff;
+    --gray: #6b7280;
+    --light: #f0ede6;
+    --red: #dc2626;
+    --green: #16a34a;
+    --orange: #d97706;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Noto Sans TC', sans-serif; background: #f1f5f9; min-height: 100vh; }
+
+  /* Login */
+  .login-screen {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--navy);
+  }
+
+  .login-box {
+    background: var(--white);
+    border-radius: 16px;
+    padding: 40px 36px;
+    width: 320px;
+    text-align: center;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+  }
+
+  .login-box .logo { font-size: 36px; margin-bottom: 12px; }
+  .login-box h2 { font-size: 18px; color: var(--navy); margin-bottom: 6px; }
+  .login-box p { font-size: 12px; color: var(--gray); margin-bottom: 24px; }
+
+  .login-box input {
+    width: 100%;
+    padding: 12px 14px;
+    border: 1.5px solid #d1d5db;
+    border-radius: 8px;
+    font-size: 15px;
+    font-family: 'Noto Sans TC', sans-serif;
+    margin-bottom: 14px;
+    text-align: center;
+    letter-spacing: 3px;
+  }
+
+  .login-box input:focus { outline: none; border-color: var(--navy); }
+
+  .login-btn {
+    width: 100%;
+    padding: 13px;
+    background: var(--navy);
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-size: 15px;
+    font-family: 'Noto Sans TC', sans-serif;
+    cursor: pointer;
+    letter-spacing: 2px;
+  }
+
+  .login-btn:hover { background: #152e4a; }
+  .login-error { color: var(--red); font-size: 13px; margin-top: 10px; }
+
+  /* Admin */
+  .admin-screen { display: none; }
+
+  .topbar {
+    background: var(--navy);
+    padding: 14px 24px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .topbar .title { color: white; font-size: 16px; font-weight: 500; letter-spacing: 1px; }
+  .topbar .logout { color: rgba(255,255,255,0.6); font-size: 13px; cursor: pointer; }
+  .topbar .logout:hover { color: white; }
+
+  .tabs {
+    background: white;
+    border-bottom: 1px solid #e5e7eb;
+    display: flex;
+    padding: 0 24px;
+  }
+
+  .tab {
+    padding: 14px 20px;
+    font-size: 14px;
+    color: var(--gray);
+    cursor: pointer;
+    border-bottom: 2px solid transparent;
+    transition: all 0.2s;
+  }
+
+  .tab.active { color: var(--navy); border-bottom-color: var(--navy); font-weight: 500; }
+
+  .content { padding: 24px; max-width: 960px; margin: 0 auto; }
+
+  .stat-row {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px;
+    margin-bottom: 24px;
+  }
+
+  .stat-card {
+    background: white;
+    border-radius: 10px;
+    padding: 16px 20px;
+    text-align: center;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.06);
+  }
+
+  .stat-card .num { font-size: 28px; font-weight: 700; color: var(--navy); }
+  .stat-card .label { font-size: 12px; color: var(--gray); margin-top: 4px; }
+
+  .card {
+    background: white;
+    border-radius: 10px;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.06);
+    margin-bottom: 12px;
+    overflow: hidden;
+  }
+
+  .card-header {
+    padding: 14px 18px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    border-bottom: 1px solid #f3f4f6;
+  }
+
+  .card-header .reg-no { font-weight: 700; color: var(--navy); font-size: 15px; }
+  .card-header .time { font-size: 12px; color: var(--gray); }
+
+  .badge {
+    display: inline-block;
+    padding: 3px 10px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 500;
+  }
+
+  .badge.pending { background: #fef3c7; color: #92400e; }
+  .badge.approved { background: #d1fae5; color: #065f46; }
+  .badge.rejected { background: #fee2e2; color: #991b1b; }
+
+  .card-body { padding: 14px 18px; }
+
+  .info-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 8px 16px;
+    margin-bottom: 14px;
+  }
+
+  .info-item .key { font-size: 11px; color: var(--gray); margin-bottom: 2px; }
+  .info-item .val { font-size: 14px; color: #1f2937; }
+
+  .action-row {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+  }
+
+  .btn {
+    padding: 9px 18px;
+    border-radius: 8px;
+    font-size: 13px;
+    font-family: 'Noto Sans TC', sans-serif;
+    cursor: pointer;
+    border: none;
+    font-weight: 500;
+    transition: opacity 0.2s;
+  }
+
+  .btn:hover { opacity: 0.85; }
+  .btn-approve { background: var(--green); color: white; }
+  .btn-reject { background: var(--red); color: white; }
+  .btn-copy { background: var(--light); color: var(--navy); }
+  .btn-sm { padding: 7px 14px; font-size: 12px; }
+
+  /* Copy modal */
+  .modal-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.5);
+    z-index: 100;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .modal-overlay.show { display: flex; }
+
+  .modal {
+    background: white;
+    border-radius: 14px;
+    padding: 28px 24px;
+    max-width: 400px;
+    width: 90%;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.2);
+  }
+
+  .modal h3 { font-size: 16px; color: var(--navy); margin-bottom: 16px; }
+
+  .copy-text {
+    background: var(--cream);
+    border-radius: 8px;
+    padding: 14px;
+    font-size: 13px;
+    line-height: 1.8;
+    white-space: pre-wrap;
+    color: #374151;
+    margin-bottom: 16px;
+    border: 1px solid #e5e7eb;
+  }
+
+  .modal-btns { display: flex; gap: 10px; }
+  .btn-full { flex: 1; }
+
+  /* Toast */
+  .toast {
+    display: none;
+    position: fixed;
+    top: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: var(--navy);
+    color: white;
+    padding: 12px 24px;
+    border-radius: 10px;
+    font-size: 14px;
+    z-index: 999;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.2);
+  }
+
+  .toast.success { background: var(--green); }
+  .toast.error { background: var(--red); }
+  .toast.show { display: block; }
+
+  .empty { text-align: center; padding: 48px; color: var(--gray); font-size: 14px; }
+
+  .refresh-btn {
+    padding: 8px 16px;
+    background: var(--cream);
+    border: 1px solid #d1d5db;
+    border-radius: 8px;
+    font-size: 13px;
+    cursor: pointer;
+    font-family: 'Noto Sans TC', sans-serif;
+    margin-bottom: 16px;
+  }
+
+  .section-tab { display: none; }
+  .section-tab.active { display: block; }
+
+  /* Payment tab */
+  .payment-card {
+    background: white;
+    border-radius: 10px;
+    padding: 16px 18px;
+    margin-bottom: 12px;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.06);
+  }
+
+  .payment-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 8px;
+  }
+
+  .last5 {
+    font-size: 20px;
+    font-weight: 700;
+    color: var(--navy);
+    letter-spacing: 3px;
+  }
+
+  input.confirm-input {
+    padding: 8px 12px;
+    border: 1.5px solid #d1d5db;
+    border-radius: 6px;
+    font-size: 14px;
+    font-family: 'Noto Sans TC', sans-serif;
+    width: 120px;
+  }
+</style>
+</head>
+<body>
+
+<!-- Login -->
+<div class="login-screen" id="loginScreen">
+  <div class="login-box">
+    <div class="logo">✈️</div>
+    <h2>幸福旅居 管理後台</h2>
+    <p>請輸入管理員密碼</p>
+    <input type="password" id="pwdInput" placeholder="密碼" onkeydown="if(event.key==='Enter')doLogin()">
+    <button class="login-btn" onclick="doLogin()">登入</button>
+    <div class="login-error" id="loginError"></div>
+  </div>
+</div>
+
+<!-- Admin -->
+<div class="admin-screen" id="adminScreen">
+  <div class="topbar">
+    <div class="title">✈️ 幸福旅居 管理後台</div>
+    <div class="logout" onclick="doLogout()">登出</div>
+  </div>
+
+  <div class="tabs">
+    <div class="tab active" onclick="switchTab('pending')">待確認 <span id="pendingBadge"></span></div>
+    <div class="tab" onclick="switchTab('all')">全部登記</div>
+    <div class="tab" onclick="switchTab('payment')">繳費對帳</div>
+  </div>
+
+  <div class="content">
+
+    <!-- 待確認 -->
+    <div class="section-tab active" id="tab-pending">
+      <button class="refresh-btn" onclick="loadPending()">🔄 重新載入</button>
+      <div class="stat-row" id="statRow"></div>
+      <div id="pendingList"></div>
+    </div>
+
+    <!-- 全部 -->
+    <div class="section-tab" id="tab-all">
+      <button class="refresh-btn" onclick="loadAll()">🔄 重新載入</button>
+      <div id="allList"></div>
+    </div>
+
+    <!-- 繳費對帳 -->
+    <div class="section-tab" id="tab-payment">
+      <button class="refresh-btn" onclick="loadPayment()">🔄 重新載入</button>
+      <div id="paymentList"></div>
+    </div>
+
+  </div>
+</div>
+
+<!-- Copy Modal -->
+<div class="modal-overlay" id="copyModal">
+  <div class="modal">
+    <h3>📋 LINE 複製文案</h3>
+    <div class="copy-text" id="copyText"></div>
+    <div class="modal-btns">
+      <button class="btn btn-copy btn-full" onclick="copyToClipboard()">複製文案</button>
+      <button class="btn btn-full" style="background:#e5e7eb;color:#374151" onclick="closeModal()">關閉</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+const GAS_URL = 'https://script.google.com/macros/s/AKfycbyQyVKmbN5H1pN0rZJvD2SOMk7xnkrVBOFZSGFCmMbCjaw6neW93U6eWbFFRiaxfeGq0w/exec';
+let ADMIN_PWD = '';
+let allData = [];
+
+function showToast(msg, type = '') {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.className = 'toast show ' + type;
+  setTimeout(() => t.className = 'toast', 3000);
+}
+
+async function gasGet(params) {
+  const url = GAS_URL + '?' + new URLSearchParams({ ...params, pwd: ADMIN_PWD });
+  const res = await fetch(url);
+  return await res.json();
+}
+
+async function gasPost(body) {
+  const res = await fetch(GAS_URL, {
+    method: 'POST',
+    body: JSON.stringify({ ...body, pwd: ADMIN_PWD })
+  });
+  return await res.json();
+}
+
+function doLogin() {
+  const pwd = document.getElementById('pwdInput').value;
+  if (!pwd) return;
+  ADMIN_PWD = pwd;
+  document.getElementById('loginScreen').style.display = 'none';
+  document.getElementById('adminScreen').style.display = 'block';
+  loadPending();
+}
+
+function doLogout() {
+  ADMIN_PWD = '';
+  document.getElementById('loginScreen').style.display = 'flex';
+  document.getElementById('adminScreen').style.display = 'none';
+  document.getElementById('pwdInput').value = '';
+}
+
+function switchTab(tab) {
+  document.querySelectorAll('.tab').forEach((t, i) => {
+    t.classList.toggle('active', ['pending','all','payment'][i] === tab);
+  });
+  document.querySelectorAll('.section-tab').forEach(s => s.classList.remove('active'));
+  document.getElementById('tab-' + tab).classList.add('active');
+  if (tab === 'pending') loadPending();
+  if (tab === 'all') loadAll();
+  if (tab === 'payment') loadPayment();
+}
+
+async function loadPending() {
+  document.getElementById('pendingList').innerHTML = '<div class="empty">載入中…</div>';
+  try {
+    const data = await gasGet({ action: 'getPending' });
+    if (data.error) { showToast(data.error, 'error'); return; }
+
+    document.getElementById('pendingBadge').textContent = data.length ? `（${data.length}）` : '';
+    document.getElementById('statRow').innerHTML = `
+      <div class="stat-card"><div class="num">${data.length}</div><div class="label">待確認</div></div>
+    `;
+
+    if (!data.length) {
+      document.getElementById('pendingList').innerHTML = '<div class="empty">✅ 目前沒有待確認的登記</div>';
+      return;
+    }
+
+    document.getElementById('pendingList').innerHTML = data.map(d => `
+      <div class="card">
+        <div class="card-header">
+          <div>
+            <span class="reg-no">${d.regNo}</span>
+            <span class="badge pending" style="margin-left:8px">待確認</span>
+          </div>
+          <div class="time">${d.time.substring(0,10)}</div>
+        </div>
+        <div class="card-body">
+          <div class="info-grid">
+            <div class="info-item"><div class="key">姓名</div><div class="val">${d.name}</div></div>
+            <div class="info-item"><div class="key">性別</div><div class="val">${d.gender}</div></div>
+            <div class="info-item"><div class="key">手機</div><div class="val">${d.phone}</div></div>
+            <div class="info-item"><div class="key">LINE ID</div><div class="val">${d.lineId || '—'}</div></div>
+            <div class="info-item"><div class="key">Email</div><div class="val">${d.email}</div></div>
+            <div class="info-item"><div class="key">活動</div><div class="val">${d.activityCode} ${d.activityName}</div></div>
+          </div>
+          <div class="action-row">
+            <button class="btn btn-approve" onclick="approve('${d.regNo}', '${d.name}', '${d.activityName}')">✅ 確認同行</button>
+            <button class="btn btn-reject" onclick="reject('${d.regNo}', '${d.name}', '${d.activityName}')">❌ 無法同行</button>
+          </div>
+        </div>
+      </div>
+    `).join('');
+  } catch(e) {
+    showToast('載入失敗', 'error');
+  }
+}
+
+async function loadAll() {
+  document.getElementById('allList').innerHTML = '<div class="empty">載入中…</div>';
+  try {
+    const data = await gasGet({ action: 'getAll' });
+    if (data.error) { showToast(data.error, 'error'); return; }
+    if (!data.length) {
+      document.getElementById('allList').innerHTML = '<div class="empty">尚無登記資料</div>';
+      return;
+    }
+    document.getElementById('allList').innerHTML = data.map(d => {
+      const badgeClass = d.status === '確認同行' ? 'approved' : d.status === '無法同行' ? 'rejected' : 'pending';
+      return `
+        <div class="card">
+          <div class="card-header">
+            <div>
+              <span class="reg-no">${d.regNo}</span>
+              <span class="badge ${badgeClass}" style="margin-left:8px">${d.status}</span>
+            </div>
+            <div class="time">${d.activityCode}</div>
+          </div>
+          <div class="card-body">
+            <div class="info-grid">
+              <div class="info-item"><div class="key">姓名</div><div class="val">${d.name}</div></div>
+              <div class="info-item"><div class="key">手機</div><div class="val">${d.phone}</div></div>
+              <div class="info-item"><div class="key">Email</div><div class="val">${d.email}</div></div>
+              <div class="info-item"><div class="key">登記時間</div><div class="val">${d.time.substring(0,10)}</div></div>
+            </div>
+          </div>
+        </div>
+      `;
+    }).join('');
+  } catch(e) {
+    showToast('載入失敗', 'error');
+  }
+}
+
+async function loadPayment() {
+  document.getElementById('paymentList').innerHTML = '<div class="empty">載入中…</div>';
+  try {
+    const data = await gasGet({ action: 'getPayments' });
+    if (data.error) { showToast(data.error, 'error'); return; }
+    if (!data.length) {
+      document.getElementById('paymentList').innerHTML = '<div class="empty">尚無待對帳資料</div>';
+      return;
+    }
+    document.getElementById('paymentList').innerHTML = data.map(d => `
+      <div class="payment-card">
+        <div class="payment-row">
+          <div>
+            <div style="font-weight:700;color:var(--navy)">${d.regNo} ${d.name}</div>
+            <div style="font-size:12px;color:var(--gray);margin-top:2px">${d.activityCode} · ${d.feeType}</div>
+          </div>
+          <div class="badge ${d.payStatus === '訂金待對帳' || d.payStatus === '尾款待對帳' ? 'pending' : 'approved'}">${d.payStatus}</div>
+        </div>
+        <div class="payment-row">
+          <div>
+            <div style="font-size:12px;color:var(--gray)">末五碼</div>
+            <div class="last5">${d.last5 || '—'}</div>
+          </div>
+          <div>
+            <div style="font-size:12px;color:var(--gray);margin-bottom:4px">金額</div>
+            <div style="font-size:15px;font-weight:700">NT$ ${d.amount || '—'}</div>
+          </div>
+        </div>
+        <div class="action-row">
+          <button class="btn btn-approve btn-sm" onclick="confirmPayment('${d.regNo}', '${d.feeType}')">✅ 確認收款</button>
+        </div>
+      </div>
+    `).join('');
+  } catch(e) {
+    showToast('載入失敗', 'error');
+  }
+}
+
+async function approve(regNo, name, activityName) {
+  if (!confirm(`確認【${name}】同行？\n確認後將自動寄送通知信。`)) return;
+  try {
+    const data = await gasPost({ action: 'approve', regNo });
+    if (data.success) {
+      showToast('✅ 已確認同行', 'success');
+      showCopyModal(data.copyText);
+      loadPending();
+    } else {
+      showToast(data.error || '操作失敗', 'error');
+    }
+  } catch(e) { showToast('操作失敗', 'error'); }
+}
+
+async function reject(regNo, name, activityName) {
+  const reason = prompt(`【${name}】無法同行原因：\n（留空則預設：本次活動名額已滿）`);
+  if (reason === null) return;
+  try {
+    const data = await gasPost({ action: 'reject', regNo, reason: reason || '本次活動名額已滿' });
+    if (data.success) {
+      showToast('已通知無法同行');
+      showCopyModal(data.copyText);
+      loadPending();
+    } else {
+      showToast(data.error || '操作失敗', 'error');
+    }
+  } catch(e) { showToast('操作失敗', 'error'); }
+}
+
+async function confirmPayment(regNo, feeType) {
+  if (!confirm(`確認收款？\n登記編號：${regNo}\n類型：${feeType}`)) return;
+  try {
+    const data = await gasPost({ action: 'confirmPayment', regNo, feeType });
+    if (data.success) {
+      showToast('✅ 對帳完成', 'success');
+      loadPayment();
+    } else {
+      showToast(data.error || '操作失敗', 'error');
+    }
+  } catch(e) { showToast('操作失敗', 'error'); }
+}
+
+function showCopyModal(text) {
+  document.getElementById('copyText').textContent = text;
+  document.getElementById('copyModal').classList.add('show');
+}
+
+function closeModal() {
+  document.getElementById('copyModal').classList.remove('show');
+}
+
+function copyToClipboard() {
+  const text = document.getElementById('copyText').textContent;
+  navigator.clipboard.writeText(text).then(() => {
+    showToast('✅ 已複製到剪貼簿', 'success');
+    closeModal();
+  });
+}
+</script>
+</body>
+</html>
