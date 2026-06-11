@@ -454,7 +454,13 @@
 
 <script>
 const GAS_URL = 'https://script.google.com/macros/s/AKfycbyQyVKmbN5H1pN0rZJvD2SOMk7xnkrVBOFZSGFCmMbCjaw6neW93U6eWbFFRiaxfeGq0w/exec';
-
+// 自動帶入活動代碼
+const urlParams = new URLSearchParams(window.location.search);
+const codeParam = urlParams.get('code');
+if (codeParam) {
+  document.getElementById('activityCode').value = codeParam;
+  document.getElementById('activityCode').readOnly = true;
+}
 function showToast(msg, type = '') {
   const t = document.getElementById('toast');
   t.textContent = msg;
