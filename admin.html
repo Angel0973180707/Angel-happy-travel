@@ -6,354 +6,121 @@
 <title>✈️ 天使幸福旅居｜管理後台</title>
 <style>
   @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@300;400;500;700&display=swap');
-
   :root {
-    --navy: #1a3a5c;
-    --gold: #c9a84c;
-    --cream: #faf8f3;
-    --white: #ffffff;
-    --gray: #6b7280;
-    --light: #f0ede6;
-    --red: #dc2626;
-    --green: #16a34a;
-    --orange: #d97706;
+    --navy: #1a3a5c; --gold: #c9a84c; --cream: #faf8f3;
+    --white: #ffffff; --gray: #6b7280; --light: #f0ede6;
+    --red: #dc2626; --green: #16a34a;
   }
-
   * { box-sizing: border-box; margin: 0; padding: 0; }
   body { font-family: 'Noto Sans TC', sans-serif; background: #f1f5f9; min-height: 100vh; }
 
-  .login-screen {
-    min-height: 100vh;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background: var(--navy);
-  }
+  .login-screen { min-height:100vh; display:flex; align-items:center; justify-content:center; background:var(--navy); }
+  .login-box { background:var(--white); border-radius:16px; padding:40px 36px; width:320px; text-align:center; box-shadow:0 20px 60px rgba(0,0,0,0.3); }
+  .login-box .logo { font-size:36px; margin-bottom:12px; }
+  .login-box h2 { font-size:18px; color:var(--navy); margin-bottom:6px; }
+  .login-box p { font-size:12px; color:var(--gray); margin-bottom:24px; }
+  .login-box input { width:100%; padding:12px 14px; border:1.5px solid #d1d5db; border-radius:8px; font-size:15px; font-family:'Noto Sans TC',sans-serif; margin-bottom:14px; text-align:center; letter-spacing:3px; }
+  .login-box input:focus { outline:none; border-color:var(--navy); }
+  .login-btn { width:100%; padding:13px; background:var(--navy); color:white; border:none; border-radius:8px; font-size:15px; font-family:'Noto Sans TC',sans-serif; cursor:pointer; letter-spacing:2px; }
 
-  .login-box {
-    background: var(--white);
-    border-radius: 16px;
-    padding: 40px 36px;
-    width: 320px;
-    text-align: center;
-    box-shadow: 0 20px 60px rgba(0,0,0,0.3);
-  }
+  .admin-screen { display:none; }
+  .topbar { background:var(--navy); padding:14px 24px; display:flex; align-items:center; justify-content:space-between; }
+  .topbar .title { color:white; font-size:16px; font-weight:500; letter-spacing:1px; }
+  .topbar .logout { color:rgba(255,255,255,0.6); font-size:13px; cursor:pointer; }
 
-  .login-box .logo { font-size: 36px; margin-bottom: 12px; }
-  .login-box h2 { font-size: 18px; color: var(--navy); margin-bottom: 6px; }
-  .login-box p { font-size: 12px; color: var(--gray); margin-bottom: 24px; }
+  .tabs { background:white; border-bottom:1px solid #e5e7eb; display:flex; padding:0 16px; overflow-x:auto; }
+  .tab { padding:14px 16px; font-size:13px; color:var(--gray); cursor:pointer; border-bottom:2px solid transparent; white-space:nowrap; transition:all 0.2s; }
+  .tab.active { color:var(--navy); border-bottom-color:var(--navy); font-weight:500; }
 
-  .login-box input {
-    width: 100%;
-    padding: 12px 14px;
-    border: 1.5px solid #d1d5db;
-    border-radius: 8px;
-    font-size: 15px;
-    font-family: 'Noto Sans TC', sans-serif;
-    margin-bottom: 14px;
-    text-align: center;
-    letter-spacing: 3px;
-  }
+  .content { padding:20px 16px; max-width:960px; margin:0 auto; }
 
-  .login-box input:focus { outline: none; border-color: var(--navy); }
+  .card { background:white; border-radius:10px; box-shadow:0 1px 4px rgba(0,0,0,0.06); margin-bottom:12px; overflow:hidden; }
+  .card-header { padding:14px 18px; display:flex; align-items:center; justify-content:space-between; border-bottom:1px solid #f3f4f6; }
+  .card-header .reg-no { font-weight:700; color:var(--navy); font-size:15px; }
+  .card-header .time { font-size:12px; color:var(--gray); }
+  .badge { display:inline-block; padding:3px 10px; border-radius:20px; font-size:12px; font-weight:500; }
+  .badge.pending { background:#fef3c7; color:#92400e; }
+  .badge.approved { background:#d1fae5; color:#065f46; }
+  .badge.rejected { background:#fee2e2; color:#991b1b; }
+  .card-body { padding:14px 18px; }
+  .info-grid { display:grid; grid-template-columns:repeat(2,1fr); gap:8px 16px; margin-bottom:14px; }
+  .info-item .key { font-size:11px; color:var(--gray); margin-bottom:2px; }
+  .info-item .val { font-size:14px; color:#1f2937; }
+  .action-row { display:flex; gap:10px; flex-wrap:wrap; }
 
-  .login-btn {
-    width: 100%;
-    padding: 13px;
-    background: var(--navy);
-    color: white;
-    border: none;
-    border-radius: 8px;
-    font-size: 15px;
-    font-family: 'Noto Sans TC', sans-serif;
-    cursor: pointer;
-    letter-spacing: 2px;
-  }
+  .btn { padding:9px 18px; border-radius:8px; font-size:13px; font-family:'Noto Sans TC',sans-serif; cursor:pointer; border:none; font-weight:500; transition:opacity 0.2s; }
+  .btn:hover { opacity:0.85; }
+  .btn-approve { background:var(--green); color:white; }
+  .btn-reject { background:var(--red); color:white; }
+  .btn-copy { background:var(--light); color:var(--navy); }
+  .btn-navy { background:var(--navy); color:white; }
+  .btn-gold { background:var(--gold); color:white; }
+  .btn-sm { padding:7px 14px; font-size:12px; }
+  .btn-full { width:100%; padding:14px; font-size:15px; letter-spacing:1px; margin-top:10px; }
 
-  .admin-screen { display: none; }
+  .modal-overlay { display:none; position:fixed; inset:0; background:rgba(0,0,0,0.5); z-index:100; align-items:center; justify-content:center; padding:20px; }
+  .modal-overlay.show { display:flex; }
+  .modal { background:white; border-radius:14px; padding:24px; max-width:440px; width:100%; box-shadow:0 20px 60px rgba(0,0,0,0.2); max-height:90vh; overflow-y:auto; }
+  .modal h3 { font-size:16px; color:var(--navy); margin-bottom:16px; }
+  .copy-text { background:var(--cream); border-radius:8px; padding:14px; font-size:13px; line-height:1.8; white-space:pre-wrap; color:#374151; margin-bottom:16px; border:1px solid #e5e7eb; }
+  .modal-btns { display:flex; gap:10px; }
 
-  .topbar {
-    background: var(--navy);
-    padding: 14px 24px;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-  }
+  .toast { display:none; position:fixed; top:20px; left:50%; transform:translateX(-50%); background:var(--navy); color:white; padding:12px 24px; border-radius:10px; font-size:14px; z-index:999; box-shadow:0 4px 20px rgba(0,0,0,0.2); text-align:center; max-width:300px; }
+  .toast.success { background:var(--green); }
+  .toast.error { background:var(--red); }
+  .toast.show { display:block; }
 
-  .topbar .title { color: white; font-size: 16px; font-weight: 500; letter-spacing: 1px; }
-  .topbar .logout { color: rgba(255,255,255,0.6); font-size: 13px; cursor: pointer; }
+  .empty { text-align:center; padding:48px; color:var(--gray); font-size:14px; }
+  .refresh-btn { padding:8px 16px; background:var(--cream); border:1px solid #d1d5db; border-radius:8px; font-size:13px; cursor:pointer; font-family:'Noto Sans TC',sans-serif; margin-bottom:16px; }
+  .section-tab { display:none; }
+  .section-tab.active { display:block; }
 
-  .tabs {
-    background: white;
-    border-bottom: 1px solid #e5e7eb;
-    display: flex;
-    padding: 0 16px;
-    overflow-x: auto;
-  }
+  .form-group { margin-bottom:16px; }
+  .field-label { display:block; font-size:13px; font-weight:500; color:#374151; margin-bottom:6px; }
+  .field-input { width:100%; padding:11px 14px; border:1.5px solid #d1d5db; border-radius:8px; font-size:14px; font-family:'Noto Sans TC',sans-serif; background:white; color:#1f2937; }
+  .field-input:focus { outline:none; border-color:var(--navy); }
+  textarea.field-input { resize:vertical; min-height:80px; }
+  .row-2 { display:grid; grid-template-columns:1fr 1fr; gap:12px; }
 
-  .tab {
-    padding: 14px 16px;
-    font-size: 13px;
-    color: var(--gray);
-    cursor: pointer;
-    border-bottom: 2px solid transparent;
-    white-space: nowrap;
-    transition: all 0.2s;
-  }
+  .section-divider { font-size:11px; letter-spacing:3px; color:var(--gold); text-align:center; margin:20px 0 16px; }
 
-  .tab.active { color: var(--navy); border-bottom-color: var(--navy); font-weight: 500; }
-
-  .content { padding: 20px 16px; max-width: 960px; margin: 0 auto; }
-
-  .card {
-    background: white;
-    border-radius: 10px;
-    box-shadow: 0 1px 4px rgba(0,0,0,0.06);
-    margin-bottom: 12px;
-    overflow: hidden;
-  }
-
-  .card-header {
-    padding: 14px 18px;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    border-bottom: 1px solid #f3f4f6;
-  }
-
-  .card-header .reg-no { font-weight: 700; color: var(--navy); font-size: 15px; }
-  .card-header .time { font-size: 12px; color: var(--gray); }
-
-  .badge {
-    display: inline-block;
-    padding: 3px 10px;
-    border-radius: 20px;
-    font-size: 12px;
-    font-weight: 500;
-  }
-
-  .badge.pending { background: #fef3c7; color: #92400e; }
-  .badge.approved { background: #d1fae5; color: #065f46; }
-  .badge.rejected { background: #fee2e2; color: #991b1b; }
-
-  .card-body { padding: 14px 18px; }
-
-  .info-grid {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: 8px 16px;
-    margin-bottom: 14px;
-  }
-
-  .info-item .key { font-size: 11px; color: var(--gray); margin-bottom: 2px; }
-  .info-item .val { font-size: 14px; color: #1f2937; }
-
-  .action-row { display: flex; gap: 10px; flex-wrap: wrap; }
-
-  .btn {
-    padding: 9px 18px;
-    border-radius: 8px;
-    font-size: 13px;
-    font-family: 'Noto Sans TC', sans-serif;
-    cursor: pointer;
-    border: none;
-    font-weight: 500;
-    transition: opacity 0.2s;
-  }
-
-  .btn:hover { opacity: 0.85; }
-  .btn-approve { background: var(--green); color: white; }
-  .btn-reject { background: var(--red); color: white; }
-  .btn-copy { background: var(--light); color: var(--navy); }
-  .btn-navy { background: var(--navy); color: white; }
-  .btn-gold { background: var(--gold); color: white; }
-  .btn-sm { padding: 7px 14px; font-size: 12px; }
-  .btn-full { width: 100%; padding: 14px; font-size: 15px; letter-spacing: 1px; }
-
-  .modal-overlay {
-    display: none;
-    position: fixed;
-    inset: 0;
-    background: rgba(0,0,0,0.5);
-    z-index: 100;
-    align-items: center;
-    justify-content: center;
-    padding: 20px;
-  }
-
-  .modal-overlay.show { display: flex; }
-
-  .modal {
-    background: white;
-    border-radius: 14px;
-    padding: 24px;
-    max-width: 440px;
-    width: 100%;
-    box-shadow: 0 20px 60px rgba(0,0,0,0.2);
-    max-height: 90vh;
-    overflow-y: auto;
-  }
-
-  .modal h3 { font-size: 16px; color: var(--navy); margin-bottom: 16px; }
-
-  .copy-text {
-    background: var(--cream);
-    border-radius: 8px;
-    padding: 14px;
-    font-size: 13px;
-    line-height: 1.8;
-    white-space: pre-wrap;
-    color: #374151;
-    margin-bottom: 16px;
-    border: 1px solid #e5e7eb;
-  }
-
-  .modal-btns { display: flex; gap: 10px; }
-
-  .toast {
-    display: none;
-    position: fixed;
-    top: 20px;
-    left: 50%;
-    transform: translateX(-50%);
-    background: var(--navy);
-    color: white;
-    padding: 12px 24px;
-    border-radius: 10px;
-    font-size: 14px;
-    z-index: 999;
-    box-shadow: 0 4px 20px rgba(0,0,0,0.2);
-    text-align: center;
-    max-width: 300px;
-  }
-
-  .toast.success { background: var(--green); }
-  .toast.error { background: var(--red); }
-  .toast.show { display: block; }
-
-  .empty { text-align: center; padding: 48px; color: var(--gray); font-size: 14px; }
-  .refresh-btn {
-    padding: 8px 16px;
-    background: var(--cream);
-    border: 1px solid #d1d5db;
-    border-radius: 8px;
-    font-size: 13px;
-    cursor: pointer;
-    font-family: 'Noto Sans TC', sans-serif;
-    margin-bottom: 16px;
-  }
-
-  .section-tab { display: none; }
-  .section-tab.active { display: block; }
-
-  /* 新增活動 */
-  .form-group { margin-bottom: 16px; }
-
-  label.field-label {
-    display: block;
-    font-size: 13px;
-    font-weight: 500;
-    color: #374151;
-    margin-bottom: 6px;
-  }
-
-  .field-input {
-    width: 100%;
-    padding: 11px 14px;
-    border: 1.5px solid #d1d5db;
-    border-radius: 8px;
-    font-size: 14px;
-    font-family: 'Noto Sans TC', sans-serif;
-    background: white;
-    color: #1f2937;
-  }
-
-  .field-input:focus { outline: none; border-color: var(--navy); }
-
-  .row-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
-
-  .ai-preview {
+  /* AI 指令區 */
+  .prompt-box {
     background: linear-gradient(135deg, #f0f7ff 0%, #faf8f3 100%);
     border: 1.5px solid #bfdbfe;
     border-radius: 12px;
     padding: 18px;
-    margin-top: 16px;
-    display: none;
+    margin: 16px 0;
+  }
+  .prompt-box h4 { font-size:13px; color:var(--navy); margin-bottom:10px; }
+  .prompt-text {
+    background:white;
+    border:1px solid #e5e7eb;
+    border-radius:8px;
+    padding:12px;
+    font-size:12px;
+    line-height:1.8;
+    color:#374151;
+    white-space:pre-wrap;
+    max-height:200px;
+    overflow-y:auto;
+    margin-bottom:10px;
   }
 
-  .ai-preview.show { display: block; }
-
-  .ai-preview h4 {
-    font-size: 13px;
-    color: var(--navy);
-    margin-bottom: 12px;
-    display: flex;
-    align-items: center;
-    gap: 6px;
+  /* 回填區 */
+  .paste-box {
+    background:#f0fdf4;
+    border:1.5px solid #86efac;
+    border-radius:12px;
+    padding:18px;
+    margin:16px 0;
+    display:none;
   }
+  .paste-box.show { display:block; }
+  .paste-box h4 { font-size:13px; color:var(--green); margin-bottom:10px; }
 
-  .preview-section {
-    background: white;
-    border-radius: 8px;
-    padding: 14px;
-    margin-bottom: 10px;
-    font-size: 13px;
-    line-height: 1.8;
-    color: #374151;
-    white-space: pre-wrap;
-    border: 1px solid #e5e7eb;
-  }
-
-  .preview-label {
-    font-size: 11px;
-    color: var(--gold);
-    font-weight: 700;
-    letter-spacing: 1px;
-    margin-bottom: 6px;
-  }
-
-  .ai-loading {
-    text-align: center;
-    padding: 24px;
-    color: var(--gray);
-    font-size: 13px;
-  }
-
-  .ai-spinner {
-    width: 28px;
-    height: 28px;
-    border: 3px solid #e5e7eb;
-    border-top-color: var(--navy);
-    border-radius: 50%;
-    animation: spin 0.8s linear infinite;
-    margin: 0 auto 10px;
-  }
-
-  @keyframes spin { to { transform: rotate(360deg); } }
-
-  .section-divider {
-    font-size: 11px;
-    letter-spacing: 3px;
-    color: var(--gold);
-    text-align: center;
-    margin: 20px 0 16px;
-  }
-
-  /* Payment */
-  .payment-card {
-    background: white;
-    border-radius: 10px;
-    padding: 16px 18px;
-    margin-bottom: 12px;
-    box-shadow: 0 1px 4px rgba(0,0,0,0.06);
-  }
-
-  .last5 {
-    font-size: 20px;
-    font-weight: 700;
-    color: var(--navy);
-    letter-spacing: 3px;
-  }
+  .payment-card { background:white; border-radius:10px; padding:16px 18px; margin-bottom:12px; box-shadow:0 1px 4px rgba(0,0,0,0.06); }
+  .last5 { font-size:20px; font-weight:700; color:var(--navy); letter-spacing:3px; }
 </style>
 </head>
 <body>
@@ -408,11 +175,12 @@
     <div class="section-tab" id="tab-newActivity">
       <div class="card">
         <div class="card-body">
-          <div class="section-divider">✦ 活動基本資料 ✦</div>
+
+          <div class="section-divider">✦ 填入活動基本資料 ✦</div>
 
           <div class="form-group">
             <label class="field-label">活動名稱 *</label>
-            <input class="field-input" id="act_name" placeholder="例：峇里島療癒之旅">
+            <input class="field-input" id="act_name" placeholder="例：越南下龍灣歡樂遊">
           </div>
 
           <div class="row-2">
@@ -429,7 +197,7 @@
           <div class="row-2">
             <div class="form-group">
               <label class="field-label">目的地 *</label>
-              <input class="field-input" id="act_location" placeholder="例：印尼峇里島">
+              <input class="field-input" id="act_location" placeholder="例：越南下龍灣">
             </div>
             <div class="form-group">
               <label class="field-label">活動類型 *</label>
@@ -445,7 +213,7 @@
           <div class="row-2">
             <div class="form-group">
               <label class="field-label">活動費用 (NT$) *</label>
-              <input class="field-input" type="number" id="act_fee" placeholder="28800">
+              <input class="field-input" type="number" id="act_fee" placeholder="21800">
             </div>
             <div class="form-group">
               <label class="field-label">名額上限 *</label>
@@ -454,28 +222,69 @@
           </div>
 
           <div class="form-group">
-            <label class="field-label">行程亮點（選填，給 AI 參考）</label>
-            <textarea class="field-input" id="act_highlights" rows="3"
-              placeholder="例：搭乘傳統木船、日落晚宴、SPA療癒、有機農場體驗…"></textarea>
+            <label class="field-label">行程亮點（給 AI 參考）</label>
+            <textarea class="field-input" id="act_highlights" placeholder="例：搭乘傳統木船、日落晚宴、SPA療癒…"></textarea>
           </div>
 
-          <button class="btn btn-gold btn-full" onclick="generateWithAI()">
-            ✨ AI 協作生成文案
+          <!-- STEP 1：產生 AI 指令 -->
+          <button class="btn btn-gold btn-full" onclick="generatePrompt()">
+            📋 STEP 1：產生 AI 協作指令
           </button>
 
-          <!-- AI 預覽 -->
-          <div class="ai-preview" id="aiPreview">
-            <h4>🤖 AI 生成預覽</h4>
-            <div id="aiContent"></div>
+          <!-- AI 指令區 -->
+          <div class="prompt-box" id="promptBox" style="display:none">
+            <h4>📋 複製以下指令，貼給 Claude AI</h4>
+            <div class="prompt-text" id="promptText"></div>
+            <button class="btn btn-navy btn-sm" onclick="copyPrompt()">複製指令</button>
           </div>
 
-          <!-- 確認寫入 -->
-          <div id="confirmArea" style="display:none;margin-top:16px">
-            <div class="section-divider">✦ 確認後寫入系統 ✦</div>
+          <!-- STEP 2：貼入回覆 -->
+          <div id="step2Area" style="display:none">
+            <div class="section-divider">✦ STEP 2：貼入 Claude 回覆 ✦</div>
+            <div class="paste-box show">
+              <h4>📥 將 Claude 回覆的內容貼在下方</h4>
+              <textarea class="field-input" id="aiReply" rows="6"
+                placeholder='貼入 Claude 回覆的 JSON，例：
+{
+  "activityDesc": "...",
+  "linePost": "...",
+  "earlyBirdNote": "..."
+}'></textarea>
+              <button class="btn btn-approve btn-full" onclick="parseAndFill()">
+                ✅ 一鍵回填
+              </button>
+            </div>
+          </div>
+
+          <!-- 回填結果 -->
+          <div id="filledArea" style="display:none">
+            <div class="section-divider">✦ AI 生成內容（可修改）✦</div>
+
             <div class="form-group">
-              <label class="field-label">活動代碼（系統自動產生，可修改）</label>
+              <label class="field-label">活動介紹</label>
+              <textarea class="field-input" id="filled_desc" rows="3"></textarea>
+              <button class="btn btn-copy btn-sm" style="margin-top:6px" onclick="copyField('filled_desc')">複製</button>
+            </div>
+
+            <div class="form-group">
+              <label class="field-label">LINE 招募文案</label>
+              <textarea class="field-input" id="filled_line" rows="5"></textarea>
+              <button class="btn btn-copy btn-sm" style="margin-top:6px" onclick="copyField('filled_line')">複製</button>
+            </div>
+
+            <div class="form-group">
+              <label class="field-label">早鳥優惠說明</label>
+              <textarea class="field-input" id="filled_early" rows="2"></textarea>
+              <button class="btn btn-copy btn-sm" style="margin-top:6px" onclick="copyField('filled_early')">複製</button>
+            </div>
+
+            <div class="section-divider">✦ 寫入系統 ✦</div>
+
+            <div class="form-group">
+              <label class="field-label">活動代碼（自動產生，可修改）</label>
               <input class="field-input" id="act_code" placeholder="TR002">
             </div>
+
             <button class="btn btn-navy btn-full" onclick="saveActivity()">
               ✅ 確認寫入活動主檔
             </button>
@@ -504,11 +313,10 @@
 
 <script>
 const GAS_URL = 'https://script.google.com/macros/s/AKfycbyQyVKmbN5H1pN0rZJvD2SOMk7xnkrVBOFZSGFCmMbCjaw6neW93U6eWbFFRiaxfeGq0w/exec';
-const CLAUDE_API = 'https://api.anthropic.com/v1/messages';
 let ADMIN_PWD = '';
-let generatedData = {};
+let savedActivityData = {};
 
-function showToast(msg, type = '') {
+function showToast(msg, type='') {
   const t = document.getElementById('toast');
   t.textContent = msg;
   t.className = 'toast show ' + type;
@@ -516,7 +324,7 @@ function showToast(msg, type = '') {
 }
 
 async function gasGet(params) {
-  const url = GAS_URL + '?' + new URLSearchParams({ ...params, pwd: ADMIN_PWD });
+  const url = GAS_URL + '?' + new URLSearchParams({...params, pwd: ADMIN_PWD});
   const res = await fetch(url);
   return await res.json();
 }
@@ -524,7 +332,7 @@ async function gasGet(params) {
 async function gasPost(body) {
   const res = await fetch(GAS_URL, {
     method: 'POST',
-    body: JSON.stringify({ ...body, pwd: ADMIN_PWD })
+    body: JSON.stringify({...body, pwd: ADMIN_PWD})
   });
   return await res.json();
 }
@@ -538,39 +346,28 @@ function doLogin() {
   loadPending();
 }
 
-function doLogout() {
-  ADMIN_PWD = '';
-  location.reload();
-}
+function doLogout() { ADMIN_PWD = ''; location.reload(); }
 
 function switchTab(tab) {
   const tabs = ['pending','all','payment','newActivity'];
-  document.querySelectorAll('.tab').forEach((t, i) => {
-    t.classList.toggle('active', tabs[i] === tab);
-  });
+  document.querySelectorAll('.tab').forEach((t,i) => t.classList.toggle('active', tabs[i]===tab));
   document.querySelectorAll('.section-tab').forEach(s => s.classList.remove('active'));
-  document.getElementById('tab-' + tab).classList.add('active');
-  if (tab === 'pending') loadPending();
-  if (tab === 'all') loadAll();
-  if (tab === 'payment') loadPayment();
+  document.getElementById('tab-'+tab).classList.add('active');
+  if (tab==='pending') loadPending();
+  if (tab==='all') loadAll();
+  if (tab==='payment') loadPayment();
 }
 
 async function loadPending() {
   document.getElementById('pendingList').innerHTML = '<div class="empty">載入中…</div>';
   try {
-    const data = await gasGet({ action: 'getPending' });
-    if (data.error) { showToast(data.error, 'error'); return; }
-    if (!data.length) {
-      document.getElementById('pendingList').innerHTML = '<div class="empty">✅ 目前沒有待確認的登記</div>';
-      return;
-    }
+    const data = await gasGet({action:'getPending'});
+    if (data.error) { showToast(data.error,'error'); return; }
+    if (!data.length) { document.getElementById('pendingList').innerHTML='<div class="empty">✅ 目前沒有待確認的登記</div>'; return; }
     document.getElementById('pendingList').innerHTML = data.map(d => `
       <div class="card">
         <div class="card-header">
-          <div>
-            <span class="reg-no">${d.regNo}</span>
-            <span class="badge pending" style="margin-left:8px">待確認</span>
-          </div>
+          <div><span class="reg-no">${d.regNo}</span><span class="badge pending" style="margin-left:8px">待確認</span></div>
           <div class="time">${d.time.substring(0,10)}</div>
         </div>
         <div class="card-body">
@@ -588,14 +385,14 @@ async function loadPending() {
           </div>
         </div>
       </div>`).join('');
-  } catch(e) { showToast('載入失敗', 'error'); }
+  } catch(e) { showToast('載入失敗','error'); }
 }
 
 async function loadAll() {
   document.getElementById('allList').innerHTML = '<div class="empty">載入中…</div>';
   try {
-    const data = await gasGet({ action: 'getAll' });
-    if (!data.length) { document.getElementById('allList').innerHTML = '<div class="empty">尚無登記資料</div>'; return; }
+    const data = await gasGet({action:'getAll'});
+    if (!data.length) { document.getElementById('allList').innerHTML='<div class="empty">尚無登記資料</div>'; return; }
     document.getElementById('allList').innerHTML = data.map(d => {
       const bc = d.status==='確認同行'?'approved':d.status==='無法同行'?'rejected':'pending';
       return `<div class="card">
@@ -619,8 +416,8 @@ async function loadAll() {
 async function loadPayment() {
   document.getElementById('paymentList').innerHTML = '<div class="empty">載入中…</div>';
   try {
-    const data = await gasGet({ action: 'getPayments' });
-    if (!data.length) { document.getElementById('paymentList').innerHTML = '<div class="empty">尚無待對帳資料</div>'; return; }
+    const data = await gasGet({action:'getPayments'});
+    if (!data.length) { document.getElementById('paymentList').innerHTML='<div class="empty">尚無待對帳資料</div>'; return; }
     document.getElementById('paymentList').innerHTML = data.map(d => `
       <div class="payment-card">
         <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px">
@@ -640,29 +437,30 @@ async function loadPayment() {
 }
 
 async function approve(regNo) {
-  if (!confirm(`確認同行？`)) return;
-  const data = await gasPost({ action: 'approve', regNo });
-  if (data.success) { showToast('✅ 已確認同行', 'success'); showCopyModal(data.copyText); loadPending(); }
+  if (!confirm('確認同行？')) return;
+  const data = await gasPost({action:'approve', regNo});
+  if (data.success) { showToast('✅ 已確認同行','success'); showCopyModal(data.copyText); loadPending(); }
   else showToast(data.error||'失敗','error');
 }
 
 async function reject(regNo) {
   const reason = prompt('無法同行原因：');
-  if (reason === null) return;
-  const data = await gasPost({ action: 'reject', regNo, reason: reason||'本次活動名額已滿' });
+  if (reason===null) return;
+  const data = await gasPost({action:'reject', regNo, reason: reason||'本次活動名額已滿'});
   if (data.success) { showToast('已通知'); showCopyModal(data.copyText); loadPending(); }
   else showToast(data.error||'失敗','error');
 }
 
 async function confirmPayment(regNo, feeType) {
-  if (!confirm(`確認收款？`)) return;
-  const data = await gasPost({ action: 'confirmPayment', regNo, feeType });
+  if (!confirm('確認收款？')) return;
+  const data = await gasPost({action:'confirmPayment', regNo, feeType});
   if (data.success) { showToast('✅ 對帳完成','success'); loadPayment(); }
   else showToast(data.error||'失敗','error');
 }
 
-// ── AI 生成活動文案 ────────────────────────────────
-async function generateWithAI() {
+// ── 新增活動 AI 協作 ──────────────────────────────
+
+function generatePrompt() {
   const name = document.getElementById('act_name').value.trim();
   const start = document.getElementById('act_start').value;
   const end = document.getElementById('act_end').value;
@@ -672,20 +470,17 @@ async function generateWithAI() {
   const quota = document.getElementById('act_quota').value;
   const highlights = document.getElementById('act_highlights').value.trim();
 
-  if (!name || !start || !end || !location || !fee || !quota) {
-    showToast('請填寫所有必填欄位', 'error'); return;
+  if (!name||!start||!end||!location||!fee||!quota) {
+    showToast('請填寫所有必填欄位','error'); return;
   }
 
   const days = calcDays(start, end);
-  const preview = document.getElementById('aiPreview');
-  const content = document.getElementById('aiContent');
-  preview.classList.add('show');
-  content.innerHTML = '<div class="ai-loading"><div class="ai-spinner"></div>AI 生成中，請稍候…</div>';
-  document.getElementById('confirmArea').style.display = 'none';
+
+  savedActivityData = { name, start, end, location, type, fee, quota, days };
 
   const prompt = `你是天使幸福旅居的品牌文案師，風格溫暖、有質感、適合台灣中年女性。
 
-請根據以下活動資料，生成三份內容，用JSON格式回傳，不要有markdown符號：
+請根據以下活動資料生成文案，只回傳 JSON 格式，不要有任何說明文字或markdown符號：
 
 活動名稱：${name}
 活動類型：${type}
@@ -693,114 +488,119 @@ async function generateWithAI() {
 回程日期：${end}
 天數：${days}
 目的地：${location}
-費用：NT$${fee}
+費用：NT$${Number(fee).toLocaleString()}
 名額：${quota}人
-行程亮點：${highlights || '請自行發揮'}
+行程亮點：${highlights||'請自行發揮，符合活動主題'}
 
-請回傳以下JSON格式：
+回傳格式：
 {
-  "activityDesc": "活動介紹（3-4句，溫暖有畫面感）",
-  "linePost": "LINE招募文案（含emoji，適合發在LINE群組，200字內）",
+  "activityDesc": "活動介紹（3-4句，溫暖有畫面感，讓人想參加）",
+  "linePost": "LINE招募文案（含emoji，適合發在LINE群組，150-200字）",
   "earlyBirdNote": "早鳥優惠說明（1-2句，製造急迫感）"
 }`;
 
+  document.getElementById('promptText').textContent = prompt;
+  document.getElementById('promptBox').style.display = 'block';
+  document.getElementById('step2Area').style.display = 'block';
+  document.getElementById('filledArea').style.display = 'none';
+
+  showToast('指令已產生，請複製後貼給 Claude！');
+}
+
+function copyPrompt() {
+  const text = document.getElementById('promptText').textContent;
+  navigator.clipboard.writeText(text).then(() => {
+    showToast('✅ 指令已複製！請貼給 Claude', 'success');
+  });
+}
+
+function parseAndFill() {
+  const raw = document.getElementById('aiReply').value.trim();
+  if (!raw) { showToast('請先貼入 Claude 的回覆', 'error'); return; }
+
   try {
-    const res = await fetch(CLAUDE_API, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        model: 'claude-sonnet-4-20250514',
-        max_tokens: 1000,
-        messages: [{ role: 'user', content: prompt }]
-      })
-    });
+    const clean = raw.replace(/```json|```/g,'').trim();
+    const parsed = JSON.parse(clean);
 
-    const data = await res.json();
-    const text = data.content[0].text.replace(/```json|```/g,'').trim();
-    const parsed = JSON.parse(text);
+    if (!parsed.activityDesc || !parsed.linePost || !parsed.earlyBirdNote) {
+      showToast('格式不正確，請確認 Claude 回覆包含三個欄位', 'error'); return;
+    }
 
-    generatedData = { name, start, end, location, type, fee, quota, days, ...parsed };
+    document.getElementById('filled_desc').value = parsed.activityDesc;
+    document.getElementById('filled_line').value = parsed.linePost;
+    document.getElementById('filled_early').value = parsed.earlyBirdNote;
 
     // 自動產生活動代碼
-    const nextCode = await getNextActivityCode();
-    document.getElementById('act_code').value = nextCode;
+    getNextActivityCode().then(code => {
+      document.getElementById('act_code').value = code;
+    });
 
-    content.innerHTML = `
-      <div class="preview-label">活動介紹</div>
-      <div class="preview-section">${parsed.activityDesc}</div>
-      <div class="preview-label">LINE 招募文案</div>
-      <div class="preview-section">${parsed.linePost}</div>
-      <div class="preview-label">早鳥優惠說明</div>
-      <div class="preview-section">${parsed.earlyBirdNote}</div>
-      <div style="display:flex;gap:8px;margin-top:12px">
-        <button class="btn btn-copy btn-sm" onclick="copySection('linePost')">複製 LINE 文案</button>
-        <button class="btn btn-copy btn-sm" onclick="copySection('activityDesc')">複製活動介紹</button>
-      </div>`;
+    document.getElementById('filledArea').style.display = 'block';
+    showToast('✅ 一鍵回填完成！', 'success');
 
-    document.getElementById('confirmArea').style.display = 'block';
-    showToast('✅ AI 生成完成！', 'success');
+    // 捲動到結果
+    document.getElementById('filledArea').scrollIntoView({behavior:'smooth'});
 
   } catch(e) {
-    content.innerHTML = '<div class="ai-loading">生成失敗，請重試</div>';
-    showToast('AI 生成失敗', 'error');
+    showToast('解析失敗，請確認格式是 JSON', 'error');
   }
+}
+
+function copyField(id) {
+  const val = document.getElementById(id).value;
+  navigator.clipboard.writeText(val).then(() => showToast('✅ 已複製', 'success'));
 }
 
 async function getNextActivityCode() {
   try {
-    const data = await gasGet({ action: 'getAll' });
-    const codes = (data || []).map(d => d.activityCode).filter(c => c && c.startsWith('TR'));
-    let max = 0;
+    const data = await gasGet({action:'getAll'});
+    const codes = (data||[]).map(d=>d.activityCode).filter(c=>c&&c.startsWith('TR'));
+    let max = 1;
     codes.forEach(c => {
       const n = parseInt(c.replace('TR',''));
-      if (n > max) max = n;
+      if (n >= max) max = n + 1;
     });
-    return 'TR' + String(max + 1).padStart(3, '0');
+    return 'TR' + String(max).padStart(3,'0');
   } catch(e) { return 'TR002'; }
 }
 
 function calcDays(start, end) {
   const d1 = new Date(start), d2 = new Date(end);
-  const diff = Math.round((d2 - d1) / (1000*60*60*24));
+  const diff = Math.round((d2-d1)/(1000*60*60*24));
   return `${diff+1}天${diff}夜`;
 }
 
 async function saveActivity() {
   const code = document.getElementById('act_code').value.trim().toUpperCase();
-  if (!code) { showToast('請填入活動代碼', 'error'); return; }
+  if (!code) { showToast('請填入活動代碼','error'); return; }
 
   const payload = {
     action: 'addActivity',
     code,
-    name: generatedData.name,
-    type: generatedData.type,
-    startDate: generatedData.start,
-    endDate: generatedData.end,
-    days: generatedData.days,
-    location: generatedData.location,
-    fee: generatedData.fee,
-    quota: generatedData.quota,
-    desc: generatedData.activityDesc
+    name: savedActivityData.name,
+    type: savedActivityData.type,
+    startDate: savedActivityData.start,
+    endDate: savedActivityData.end,
+    days: savedActivityData.days,
+    location: savedActivityData.location,
+    fee: savedActivityData.fee,
+    quota: savedActivityData.quota,
+    desc: document.getElementById('filled_desc').value
   };
 
   const data = await gasPost(payload);
   if (data.success) {
-    showToast('✅ 活動已寫入系統！', 'success');
-    document.getElementById('confirmArea').style.display = 'none';
-    document.getElementById('aiPreview').classList.remove('show');
-    // 清空表單
-    ['act_name','act_start','act_end','act_location','act_fee','act_quota','act_highlights'].forEach(id => {
+    showToast('✅ 活動已寫入系統！首頁將自動顯示', 'success');
+    // 清空
+    ['act_name','act_start','act_end','act_location','act_fee','act_quota','act_highlights','aiReply'].forEach(id => {
       document.getElementById(id).value = '';
     });
+    document.getElementById('promptBox').style.display = 'none';
+    document.getElementById('step2Area').style.display = 'none';
+    document.getElementById('filledArea').style.display = 'none';
   } else {
-    showToast(data.error || '寫入失敗', 'error');
+    showToast(data.error||'寫入失敗','error');
   }
-}
-
-function copySection(key) {
-  navigator.clipboard.writeText(generatedData[key] || '').then(() => {
-    showToast('✅ 已複製', 'success');
-  });
 }
 
 function showCopyModal(text) {
@@ -808,13 +608,11 @@ function showCopyModal(text) {
   document.getElementById('copyModal').classList.add('show');
 }
 
-function closeModal() {
-  document.getElementById('copyModal').classList.remove('show');
-}
+function closeModal() { document.getElementById('copyModal').classList.remove('show'); }
 
 function copyToClipboard() {
   navigator.clipboard.writeText(document.getElementById('copyText').textContent).then(() => {
-    showToast('✅ 已複製到剪貼簿', 'success');
+    showToast('✅ 已複製到剪貼簿','success');
     closeModal();
   });
 }
