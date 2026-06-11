@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>✈️ 幸福旅居｜繳費回報</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@300;400;500&display=swap');
+
+  :root {
+    --navy: #1a3a5c;
+    --gold: #c9a84c;
+    --cream: #faf8f3;
+    --white: #ffffff;
+    --gray: #6b7280;
+    --light: #f0ede6;
+    --red: #dc2626;
+    --green: #16a34a;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Noto Sans TC', sans-serif;
+    background: var(--cream);
+    min-height: 100vh;
+  }
+
+  header {
+    background: var(--navy);
+    padding: 24px;
+    text-align: center;
+  }
+
+  header h1 { font-size: 20px; color: white; letter-spacing: 1px; }
+  header p { font-size: 12px; color: rgba(255,255,255,0.6); margin-top: 6px; }
+
+  .container {
+    max-width: 480px;
+    margin: 0 auto;
+    padding: 32px 20px 60px;
+  }
+
+  .card {
+    background: white;
+    border-radius: 14px;
+    padding: 28px 24px;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+  }
+
+  .card h2 {
+    font-size: 16px;
+    color: var(--navy);
+    margin-bottom: 20px;
+    padding-bottom: 12px;
+    border-bottom: 1px solid #f0f0f0;
+  }
+
+  .form-group { margin-bottom: 18px; }
+
+  label {
+    display: block;
+    font-size: 13px;
+    font-weight: 500;
+    color: #374151;
+    margin-bottom: 6px;
+  }
+
+  .required { color: var(--red); margin-left: 3px; }
+  .hint { font-weight: 300; color: var(--gray); font-size: 12px; margin-left: 4px; }
+
+  input, select {
+    width: 100%;
+    padding: 12px 14px;
+    border: 1.5px solid #d1d5db;
+    border-radius: 8px;
+    font-size: 15px;
+    font-family: 'Noto Sans TC', sans-serif;
+    background: white;
+    color: #1f2937;
+    -webkit-appearance: none;
+  }
+
+  input:focus, select:focus { outline: none; border-color: var(--navy); }
+
+  .last5-input {
+    font-size: 24px;
+    font-weight: 700;
+    letter-spacing: 8px;
+    text-align: center;
+    color: var(--navy);
+  }
+
+  .submit-btn {
+    width: 100%;
+    padding: 15px;
+    background: var(--navy);
+    color: white;
+    border: none;
+    border-radius: 10px;
+    font-size: 15px;
+    font-family: 'Noto Sans TC', sans-serif;
+    font-weight: 500;
+    letter-spacing: 2px;
+    cursor: pointer;
+    margin-top: 8px;
+    transition: background 0.2s;
+  }
+
+  .submit-btn:hover { background: #152e4a; }
+  .submit-btn:disabled { background: #9ca3af; cursor: not-allowed; }
+
+  .info-box {
+    background: var(--light);
+    border-radius: 10px;
+    padding: 16px;
+    margin-bottom: 20px;
+    font-size: 13px;
+    line-height: 1.8;
+    color: #374151;
+  }
+
+  .info-box strong { color: var(--navy); }
+
+  .success-screen {
+    display: none;
+    text-align: center;
+    padding: 40px 20px;
+  }
+
+  .success-screen .icon { font-size: 52px; margin-bottom: 16px; }
+  .success-screen h2 { font-size: 20px; color: var(--navy); margin-bottom: 10px; }
+  .success-screen p { font-size: 14px; color: var(--gray); line-height: 1.8; }
+
+  .toast {
+    display: none;
+    position: fixed;
+    top: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: var(--navy);
+    color: white;
+    padding: 12px 24px;
+    border-radius: 10px;
+    font-size: 14px;
+    z-index: 999;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.2);
+  }
+
+  .toast.success { background: var(--green); }
+  .toast.error { background: var(--red); }
+  .toast.show { display: block; }
+
+  .footer-text {
+    text-align: center;
+    margin-top: 24px;
+    font-size: 12px;
+    color: var(--gray);
+    line-height: 1.8;
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>✈️ 幸福旅居｜繳費回報</h1>
+  <p>完成匯款後請填寫此表單</p>
+</header>
+
+<div class="container">
+
+  <div class="success-screen" id="successScreen">
+    <div class="icon">✅</div>
+    <h2>繳費資料已送出</h2>
+    <p>感謝您的回報！<br>工作人員確認對帳後將通知您。<br><br>請保持手機與 LINE 暢通。</p>
+  </div>
+
+  <div id="formArea">
+    <div class="info-box">
+      <strong>匯款帳號資訊</strong><br>
+      銀行：玉山銀行 新興分行<br>
+      戶名：幸福旅居<br>
+      帳號：0123456789012<br><br>
+      匯款後請填寫以下資料，以利確認
+    </div>
+
+    <div class="card">
+      <h2>📋 填寫匯款資訊</h2>
+
+      <div class="form-group">
+        <label>登記編號 <span class="required">*</span> <span class="hint">例：TR001-001</span></label>
+        <input type="text" id="regNo" placeholder="TR001-001" required>
+      </div>
+
+      <div class="form-group">
+        <label>繳費類型 <span class="required">*</span></label>
+        <select id="feeType" required>
+          <option value="">請選擇</option>
+          <option value="訂金">訂金</option>
+          <option value="尾款">尾款</option>
+          <option value="全額">全額</option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label>匯款金額 <span class="required">*</span></label>
+        <input type="number" id="amount" placeholder="請填入實際匯款金額" required>
+      </div>
+
+      <div class="form-group">
+        <label>匯款帳號末五碼 <span class="required">*</span></label>
+        <input type="text" id="last5" class="last5-input" maxlength="5" placeholder="12345" required>
+      </div>
+
+      <button class="submit-btn" id="submitBtn" onclick="submitPayment()">送出回報</button>
+    </div>
+
+    <p class="footer-text">
+      如有疑問請透過 LINE 聯繫召集人<br><br>
+      ── 幸福旅居 召集人
+    </p>
+  </div>
+
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+const GAS_URL = 'https://script.google.com/macros/s/AKfycbyQyVKmbN5H1pN0rZJvD2SOMk7xnkrVBOFZSGFCmMbCjaw6neW93U6eWbFFRiaxfeGq0w/exec';
+
+function showToast(msg, type = '') {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.className = 'toast show ' + type;
+  setTimeout(() => t.className = 'toast', 3500);
+}
+
+async function submitPayment() {
+  const regNo = document.getElementById('regNo').value.trim();
+  const feeType = document.getElementById('feeType').value;
+  const amount = document.getElementById('amount').value.trim();
+  const last5 = document.getElementById('last5').value.trim();
+
+  if (!regNo || !feeType || !amount || !last5) {
+    showToast('請填寫所有必填欄位', 'error'); return;
+  }
+
+  if (last5.length !== 5 || !/^\d+$/.test(last5)) {
+    showToast('末五碼請填入5位數字', 'error'); return;
+  }
+
+  const btn = document.getElementById('submitBtn');
+  btn.disabled = true;
+  btn.textContent = '送出中…';
+
+  try {
+    const res = await fetch(GAS_URL, {
+      method: 'POST',
+      body: JSON.stringify({
+        action: 'submitPayment',
+        regNo, type: feeType, amount, last5
+      })
+    });
+    const data = await res.json();
+
+    if (data.success) {
+      document.getElementById('formArea').style.display = 'none';
+      document.getElementById('successScreen').style.display = 'block';
+    } else {
+      showToast(data.error || '送出失敗，請重試', 'error');
+      btn.disabled = false;
+      btn.textContent = '送出回報';
+    }
+  } catch(e) {
+    showToast('網路錯誤，請重試', 'error');
+    btn.disabled = false;
+    btn.textContent = '送出回報';
+  }
+}
+
+// 自動大寫登記編號
+document.getElementById('regNo').addEventListener('input', function() {
+  this.value = this.value.toUpperCase();
+});
+</script>
+</body>
+</html>
