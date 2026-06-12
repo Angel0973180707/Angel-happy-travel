@@ -24,6 +24,13 @@ const TR_SHEET_TABS = [
 { name: '11_同行人資料', headers: ['主報名編號','活動代碼','主報名人','同行人姓名','關係','手機','身分證／護照號碼','希望同房','備註'] }
 ];
 
+const PHONE_TEXT_COLUMNS = {
+'02_報名資料': [10],
+'05_飲食健康': [10],
+'08_LINE群組': [4],
+'11_同行人資料': [6]
+};
+
 function onOpen() {
 SpreadsheetApp.getUi()
 .createMenu('✈️ 幸福旅居系統')
@@ -83,6 +90,7 @@ sheet.getRange(1, 1, 1, tab.headers.length)
 .setBackground('#1a4a7a').setFontColor('#ffffff').setFontWeight('bold');
 sheet.setFrozenRows(1);
 }
+applyPhoneTextFormats_(sheet);
 });
 const mainSheet = ss.getSheetByName('01_活動主檔');
 if (mainSheet.getLastRow() === 1) {
@@ -149,9 +157,29 @@ function isValidEmail_(value) {
 return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(String(value || '').trim());
 }
 
+function normalizePhone_(value) {
+return String(value == null ? '' : value).trim();
+}
+
+function applyPhoneTextFormats_(sheet) {
+const columns = PHONE_TEXT_COLUMNS[sheet.getName()] || [];
+const rowCount = Math.max(1, sheet.getMaxRows() - 1);
+columns.forEach(column => sheet.getRange(2, column, rowCount, 1).setNumberFormat('@'));
+}
+
+function appendRowWithPhoneText_(sheet, values) {
+const row = sheet.getLastRow() + 1;
+const columns = PHONE_TEXT_COLUMNS[sheet.getName()] || [];
+columns.forEach(column => sheet.getRange(row, column).setNumberFormat('@'));
+sheet.getRange(row, 1, 1, values.length).setValues([values]);
+}
+
 function getOrCreateSheet_(ss, name) {
 let sheet = ss.getSheetByName(name);
-if (sheet) return sheet;
+if (sheet) {
+applyPhoneTextFormats_(sheet);
+return sheet;
+}
 const definition = TR_SHEET_TABS.find(tab => tab.name === name);
 if (!definition) throw new Error('找不到工作表設定：' + name);
 sheet = ss.insertSheet(name);
@@ -159,6 +187,7 @@ sheet.appendRow(definition.headers);
 sheet.getRange(1, 1, 1, definition.headers.length)
 .setBackground('#1a4a7a').setFontColor('#ffffff').setFontWeight('bold');
 sheet.setFrozenRows(1);
+applyPhoneTextFormats_(sheet);
 return sheet;
 }
 
@@ -264,9 +293,9 @@ lock.releaseLock();
 function writeRegistration_(ss, regNo, regTime, activity, activityCode, name, email, d) {
 const code = normalizeActivityCode(activity ? activity.code : activityCode);
 if (!code) throw new Error('活動代碼格式錯誤');
-ss.getSheetByName('02_報名資料').appendRow([
+appendRowWithPhoneText_(ss.getSheetByName('02_報名資料'), [
 regNo, regTime, code, activity ? activity.name : '', '天使幸福旅居',
-name, d.gender, d.birthday, d.idNo, d.phone,
+name, d.gender, d.birthday, d.idNo, normalizePhone_(d.phone),
 d.lineId, email, d.address, '待確認', ''
 ]);
 ss.getSheetByName('03_護照簽證').appendRow([
@@ -275,9 +304,9 @@ regNo, code, name, d.passportName, d.passportNo, d.passportExpiry, d.passportPho
 ss.getSheetByName('04_住宿房務').appendRow([
 regNo, code, name, d.roomType, '', '', '', '', ''
 ]);
-ss.getSheetByName('05_飲食健康').appendRow([
+appendRowWithPhoneText_(ss.getSheetByName('05_飲食健康'), [
 regNo, code, name, d.food, d.chronic,
-d.walking, d.special, d.emergencyName, d.emergencyRel, d.emergencyPhone
+d.walking, d.special, d.emergencyName, d.emergencyRel, normalizePhone_(d.emergencyPhone)
 ]);
 ss.getSheetByName('06_繳費管理').appendRow([
 regNo, code, name, activity ? activity.fee : '',
@@ -288,15 +317,15 @@ regNo, code, name, d.birthday, d.idNo, '', '', '待投保',
 (d.insuranceConsent ? '已同意辦理保險' : '未勾選保險同意') +
 (d.insuranceNote ? '；' + d.insuranceNote : '')
 ]);
-ss.getSheetByName('08_LINE群組').appendRow([
-regNo, code, name, d.phone, d.lineId, '否', '否', '否', '否', ''
+appendRowWithPhoneText_(ss.getSheetByName('08_LINE群組'), [
+regNo, code, name, normalizePhone_(d.phone), d.lineId, '否', '否', '否', '否', ''
 ]);
 const companionSheet = getOrCreateSheet_(ss, '11_同行人資料');
 (Array.isArray(d.companions) ? d.companions : []).forEach(companion => {
 if (!companion || !String(companion.name || '').trim()) return;
-companionSheet.appendRow([
+appendRowWithPhoneText_(companionSheet, [
 regNo, code, name, String(companion.name).trim(),
-String(companion.relation || '').trim(), String(companion.phone || '').trim(),
+String(companion.relation || '').trim(), normalizePhone_(companion.phone),
 String(companion.idNo || '').trim().toUpperCase(), companion.sameRoom ? '是' : '否', ''
 ]);
 });
