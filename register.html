@@ -266,6 +266,66 @@
   .payment-info strong { color: var(--navy); }
   .payment-info ol { margin: 8px 0 0 20px; }
 
+  .conditional-section[hidden] { display: none; }
+
+  .section-note {
+    margin: -6px 0 14px;
+    font-size: 12px;
+    color: var(--gray);
+    line-height: 1.7;
+  }
+
+  .file-hint {
+    margin-top: 6px;
+    font-size: 11px;
+    color: var(--gray);
+    line-height: 1.6;
+  }
+
+  .companion-list {
+    display: grid;
+    gap: 12px;
+  }
+
+  .companion-card {
+    position: relative;
+    padding: 16px;
+    border: 1px solid #d1d5db;
+    border-radius: 10px;
+    background: var(--white);
+  }
+
+  .companion-card-title {
+    margin-bottom: 12px;
+    color: var(--navy);
+    font-size: 13px;
+    font-weight: 700;
+  }
+
+  .secondary-btn, .remove-companion {
+    border: 1px solid var(--navy);
+    border-radius: 8px;
+    background: var(--white);
+    color: var(--navy);
+    cursor: pointer;
+    font-family: inherit;
+  }
+
+  .secondary-btn {
+    width: 100%;
+    margin-top: 10px;
+    padding: 11px 14px;
+    font-size: 14px;
+  }
+
+  .remove-companion {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    padding: 5px 9px;
+    font-size: 12px;
+  }
+
   .success-steps {
     max-width: 360px;
     margin: 24px auto 0;
@@ -308,6 +368,8 @@
     .radio-group { flex-direction: column; gap: 10px; }
     .toast { top: 12px; width: calc(100% - 24px); max-width: none; }
     .success-screen { padding: 36px 8px; }
+    .companion-card { padding: 14px 12px; }
+    .remove-companion { position: static; width: 100%; margin-top: 4px; }
   }
 </style>
 </head>
@@ -325,7 +387,7 @@
   <div class="success-screen" id="successScreen">
     <div class="icon">✈️</div>
     <h2>登記資料已送出</h2>
-    <p>感謝您的登記！<br>我們正在確認同行名額，<br>結果將以 Email 通知您。</p>
+    <p id="successMessage">感謝您的登記！<br>我們正在確認同行名額。</p>
     <div class="reg-no" id="successRegNo"></div>
     <div class="success-steps">
       <strong>接下來的步驟</strong>
@@ -406,25 +468,39 @@
       <input type="text" id="address" placeholder="選填">
     </div>
 
-    <div class="section-title">護照資料</div>
+    <div class="conditional-section" id="internationalFields" hidden>
+      <div class="section-title">護照資料（國外團必填）</div>
+      <p class="section-note">護照照片僅供本次行程訂位、簽證與保險作業使用。</p>
 
-    <div class="row-2">
-      <div class="form-group">
-        <label>護照英文姓名 <span class="required">*</span></label>
-        <input type="text" id="passportName" placeholder="CHEN HSIU FANG" required>
+      <div class="row-2">
+        <div class="form-group">
+          <label>護照英文姓名 <span class="required">*</span></label>
+          <input type="text" id="passportName" placeholder="CHEN HSIU FANG">
+        </div>
+        <div class="form-group">
+          <label>護照號碼 <span class="required">*</span></label>
+          <input type="text" id="passportNo" placeholder="123456789">
+        </div>
       </div>
+
       <div class="form-group">
-        <label>護照號碼 <span class="required">*</span></label>
-        <input type="text" id="passportNo" placeholder="123456789" required>
+        <label>護照到期日 <span class="required">*</span>
+          <span class="hint">需距出發日 6 個月以上</span>
+        </label>
+        <input type="date" id="passportExpiry">
+      </div>
+
+      <div class="form-group">
+        <label>護照照片 <span class="required">*</span></label>
+        <input type="file" id="passportPhoto" accept="image/jpeg,image/png,image/webp,application/pdf">
+        <div class="file-hint">可上傳 JPG、PNG、WebP 或 PDF，檔案上限 5 MB；請確認文字清楚且四角完整。</div>
       </div>
     </div>
 
-    <div class="form-group">
-      <label>護照到期日 <span class="required">*</span>
-        <span class="hint">需距出發日 6 個月以上</span>
-      </label>
-      <input type="date" id="passportExpiry" required>
-    </div>
+    <div class="section-title">同行人資料</div>
+    <p class="section-note">同行人也需各自完成正式報名；此處用於房務與聯絡安排，可新增多位。</p>
+    <div class="companion-list" id="companionList"></div>
+    <button type="button" class="secondary-btn" id="addCompanionBtn">＋ 新增同行人</button>
 
     <div class="section-title">住宿與飲食</div>
 
@@ -493,6 +569,20 @@
     <div class="form-group">
       <label>緊急聯絡電話 <span class="required">*</span></label>
       <input type="text" inputmode="tel" id="emergencyPhone" placeholder="0912345678" required>
+    </div>
+
+    <div class="section-title">保險資料</div>
+
+    <div class="form-group">
+      <label>投保需求或既有保險說明</label>
+      <textarea id="insuranceNote" placeholder="選填，例如：已有旅平險、需協助投保、特殊職業或其他注意事項"></textarea>
+    </div>
+
+    <div class="consent-box">
+      <label class="checkbox-item">
+        <input type="checkbox" id="insuranceConsent" required>
+        我同意主辦單位依本次行程需要，將必要資料提供給合作旅行社或保險公司辦理保險
+      </label>
     </div>
 
     <div class="section-title">付款說明</div>
@@ -579,6 +669,111 @@ function setActivityStatus(message, type) {
   status.className = 'activity-status show ' + type;
 }
 
+function isInternationalActivity(activity) {
+  const type = String(activity && activity.type || '').toLowerCase();
+  return type.includes('海外') || type.includes('國外') || type.includes('international');
+}
+
+function applyActivityType(activity) {
+  const international = isInternationalActivity(activity);
+  const section = document.getElementById('internationalFields');
+  const requiredIds = ['passportName', 'passportNo', 'passportExpiry', 'passportPhoto'];
+  section.hidden = !international;
+  requiredIds.forEach(id => {
+    document.getElementById(id).required = international;
+  });
+}
+
+function addCompanion(values = {}) {
+  const list = document.getElementById('companionList');
+  if (list.children.length >= 10) {
+    showToast('同行人最多新增 10 位', 'error');
+    return;
+  }
+
+  const card = document.createElement('div');
+  card.className = 'companion-card';
+  card.innerHTML = `
+    <div class="companion-card-title">同行人 ${list.children.length + 1}</div>
+    <div class="row-2">
+      <div class="form-group">
+        <label>姓名 <span class="required">*</span></label>
+        <input type="text" data-field="name" value="${escapeHtml(values.name || '')}" required>
+      </div>
+      <div class="form-group">
+        <label>關係</label>
+        <input type="text" data-field="relation" value="${escapeHtml(values.relation || '')}" placeholder="配偶、親友">
+      </div>
+    </div>
+    <div class="row-2">
+      <div class="form-group">
+        <label>手機</label>
+        <input type="text" inputmode="tel" data-field="phone" value="${escapeHtml(values.phone || '')}">
+      </div>
+      <div class="form-group">
+        <label>身分證／護照號碼</label>
+        <input type="text" data-field="idNo" value="${escapeHtml(values.idNo || '')}">
+      </div>
+    </div>
+    <label class="checkbox-item">
+      <input type="checkbox" data-field="sameRoom" ${values.sameRoom ? 'checked' : ''}> 希望安排同房
+    </label>
+    <button type="button" class="remove-companion">移除此同行人</button>
+  `;
+  card.querySelector('.remove-companion').addEventListener('click', () => {
+    card.remove();
+    renumberCompanions();
+  });
+  list.appendChild(card);
+}
+
+function escapeHtml(value) {
+  return String(value).replace(/[&<>"']/g, char => ({
+    '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'
+  })[char]);
+}
+
+function renumberCompanions() {
+  [...document.querySelectorAll('.companion-card-title')].forEach((title, index) => {
+    title.textContent = '同行人 ' + (index + 1);
+  });
+}
+
+function getCompanions() {
+  return [...document.querySelectorAll('.companion-card')].map(card => ({
+    name: card.querySelector('[data-field="name"]').value.trim(),
+    relation: card.querySelector('[data-field="relation"]').value.trim(),
+    phone: card.querySelector('[data-field="phone"]').value.trim(),
+    idNo: card.querySelector('[data-field="idNo"]').value.trim().toUpperCase(),
+    sameRoom: card.querySelector('[data-field="sameRoom"]').checked
+  })).filter(companion => companion.name);
+}
+
+function readPassportPhoto() {
+  const input = document.getElementById('passportPhoto');
+  const file = input.files[0];
+  if (!file) return Promise.resolve(null);
+
+  const allowedTypes = ['image/jpeg', 'image/png', 'image/webp', 'application/pdf'];
+  if (!allowedTypes.includes(file.type)) {
+    throw new Error('護照照片格式僅接受 JPG、PNG、WebP 或 PDF');
+  }
+  if (file.size > 5 * 1024 * 1024) {
+    throw new Error('護照照片不可超過 5 MB');
+  }
+
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = () => resolve({
+      name: file.name,
+      mimeType: file.type,
+      data: String(reader.result).split(',')[1]
+    });
+    reader.onerror = () => reject(new Error('護照照片讀取失敗'));
+    reader.readAsDataURL(file);
+  });
+}
+
 async function validateActivity(code, showSuccess = true) {
   const normalizedCode = code.trim().toUpperCase();
   if (!normalizedCode) {
@@ -599,6 +794,7 @@ async function validateActivity(code, showSuccess = true) {
 
     if (!activity) {
       activeActivity = null;
+      applyActivityType(null);
       setActivityStatus('找不到此活動，或活動目前已停招', 'error');
       return null;
     }
@@ -611,17 +807,21 @@ async function validateActivity(code, showSuccess = true) {
 
     if (limit > 0 && (remaining <= 0 || registered >= limit)) {
       activeActivity = null;
+      applyActivityType(null);
       setActivityStatus(activity.name + '目前名額已滿', 'error');
       return null;
     }
 
     activeActivity = {...activity, limit, remaining, registered};
+    applyActivityType(activeActivity);
     if (showSuccess) {
-      setActivityStatus(`${activity.name}：剩餘 ${remaining} 位`, 'ok');
+      const tripType = isInternationalActivity(activity) ? '國外團' : '國內團';
+      setActivityStatus(`${activity.name}（${tripType}）：剩餘 ${remaining} 位`, 'ok');
     }
     return activeActivity;
   } catch (error) {
     activeActivity = null;
+    applyActivityType(null);
     setActivityStatus('暫時無法確認活動狀態，請稍後再試', 'error');
     return null;
   }
@@ -646,6 +846,23 @@ document.getElementById('regForm').addEventListener('submit', async function(e) 
   }
 
   const idNo = document.getElementById('idNo').value.trim().toUpperCase();
+  const email = document.getElementById('email').value.trim();
+  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+    showToast('請輸入可接收通知的 Email', 'error');
+    return;
+  }
+
+  const international = isInternationalActivity(verifiedActivity);
+  if (international) {
+    const passportFields = ['passportName', 'passportNo', 'passportExpiry', 'passportPhoto'];
+    const missingPassport = passportFields.some(id => !document.getElementById(id).value);
+    if (missingPassport) {
+      showToast('國外團請完整填寫護照資料並上傳照片', 'error');
+      document.getElementById('internationalFields').scrollIntoView({ behavior: 'smooth' });
+      return;
+    }
+  }
+
   const completedKey = await getCompletedRegistrationKey(activityCode, idNo);
   const completedRegNo = localStorage.getItem(completedKey);
   if (completedRegNo) {
@@ -659,8 +876,17 @@ document.getElementById('regForm').addEventListener('submit', async function(e) 
 
   if (!walking) { showToast('請選擇是否可正常步行', 'error'); return; }
   if (!document.getElementById('consent1').checked ||
-      !document.getElementById('consent2').checked) {
+      !document.getElementById('consent2').checked ||
+      !document.getElementById('insuranceConsent').checked) {
     showToast('請勾選同意聲明', 'error'); return;
+  }
+
+  let passportPhoto = null;
+  try {
+    passportPhoto = international ? await readPassportPhoto() : null;
+  } catch (error) {
+    showToast(error.message, 'error');
+    return;
   }
 
   const btn = document.getElementById('submitBtn');
@@ -678,11 +904,13 @@ document.getElementById('regForm').addEventListener('submit', async function(e) 
     idNo,
     phone: document.getElementById('phone').value.trim(),
     lineId: document.getElementById('lineId').value.trim(),
-    email: document.getElementById('email').value.trim(),
+    email,
     address: document.getElementById('address').value.trim(),
-    passportName: document.getElementById('passportName').value.trim(),
-    passportNo: document.getElementById('passportNo').value.trim(),
-    passportExpiry: document.getElementById('passportExpiry').value,
+    passportName: international ? document.getElementById('passportName').value.trim() : '',
+    passportNo: international ? document.getElementById('passportNo').value.trim() : '',
+    passportExpiry: international ? document.getElementById('passportExpiry').value : '',
+    passportPhoto,
+    companions: getCompanions(),
     roomType: document.getElementById('roomType').value.trim(),
     food: foods,
     walking: walking.value,
@@ -690,7 +918,9 @@ document.getElementById('regForm').addEventListener('submit', async function(e) 
     special: document.getElementById('special').value.trim(),
     emergencyName: document.getElementById('emergencyName').value.trim(),
     emergencyRel: document.getElementById('emergencyRel').value.trim(),
-    emergencyPhone: document.getElementById('emergencyPhone').value.trim()
+    emergencyPhone: document.getElementById('emergencyPhone').value.trim(),
+    insuranceConsent: document.getElementById('insuranceConsent').checked,
+    insuranceNote: document.getElementById('insuranceNote').value.trim()
   };
 
   try {
@@ -705,6 +935,9 @@ document.getElementById('regForm').addEventListener('submit', async function(e) 
       const s = document.getElementById('successScreen');
       s.style.display = 'block';
       document.getElementById('successRegNo').textContent = '登記編號：' + data.regNo;
+      document.getElementById('successMessage').innerHTML = data.emailSent
+        ? '感謝您的登記！<br>確認信已寄到您的 Email，請一併檢查垃圾郵件。'
+        : '感謝您的登記！<br>Email 暫時未寄出，請加入 LINE 並提供登記編號。';
       localStorage.setItem(completedKey, data.regNo);
       window.scrollTo({ top: 0, behavior: 'smooth' });
     } else {
@@ -728,6 +961,8 @@ document.getElementById('activityCode').addEventListener('change', function() {
 document.getElementById('activityCode').addEventListener('blur', function() {
   validateActivity(this.value);
 });
+
+document.getElementById('addCompanionBtn').addEventListener('click', () => addCompanion());
 
 if (codeParam) validateActivity(codeParam);
 </script>
