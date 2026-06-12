@@ -365,7 +365,8 @@ const GAS_URL = 'https://script.google.com/macros/s/AKfycbyQyVKmbN5H1pN0rZJvD2SO
 
 async function loadActivities() {
   try {
-    const res = await fetch(GAS_URL + '?action=getActiveEvents');
+    const res = await fetch(GAS_URL + '?action=getActiveEvents', { cache: 'no-store' });
+    if (!res.ok) throw new Error('活動資料讀取失敗');
     const data = await res.json();
 
     if (!data || data.error || !data.length) {
@@ -379,8 +380,13 @@ async function loadActivities() {
     }
 
     document.getElementById('activityList').innerHTML = data.map(a => {
-      const pct = a.limit > 0 ? Math.round((a.registered / a.limit) * 100) : 0;
-      const isFull = a.remaining <= 0;
+      const limit = Math.max(0, Number(a.limit) || 0);
+      const apiRegistered = Math.max(0, Number(a.registered) || 0);
+      const apiRemaining = Math.min(limit, Math.max(0, Number(a.remaining) || 0));
+      const registered = limit > 0 ? Math.min(limit, Math.max(apiRegistered, limit - apiRemaining)) : apiRegistered;
+      const remaining = limit > 0 ? Math.max(0, limit - registered) : apiRemaining;
+      const pct = limit > 0 ? Math.round((registered / limit) * 100) : 0;
+      const isFull = limit > 0 && remaining <= 0;
       const statusClass = isFull ? 'status-full' : 'status-open';
       const statusText = isFull ? '名額已滿' : '招募中';
 
@@ -421,7 +427,7 @@ async function loadActivities() {
             <div class="quota-bar">
               <div class="quota-fill" style="width:${Math.min(pct,100)}%"></div>
             </div>
-            <div class="quota-text">剩餘名額 ${a.remaining} 位（共 ${a.limit} 位）</div>
+            <div class="quota-text">已登記 ${registered} 位，剩餘 ${remaining} 位（共 ${limit} 位）</div>
 
             <div style="margin-top:16px">
               <a href="register.html?code=${a.code}"
