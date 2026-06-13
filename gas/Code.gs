@@ -480,10 +480,10 @@ return jsonOut({ error: '未知指令' });
 function doPost(e) {
 const params = JSON.parse(e.postData.contents);
 if (params.action === 'register') return jsonOut(registerFromWeb_(params));
+if (params.action === 'submitPayment') return jsonOut(submitPayment_(params));
 if (!getAdminPassword_() || params.pwd !== getAdminPassword_()) return jsonOut({ error: '密碼錯誤' });
 if (params.action === 'approve') return jsonOut(approveByRegNo_(params.regNo));
 if (params.action === 'reject') return jsonOut(rejectByRegNo_(params.regNo, params.reason));
-if (params.action === 'submitPayment') return jsonOut(submitPayment_(params));
 if (params.action === 'confirmPayment') return jsonOut(confirmPayment_(params.regNo, params.feeType));
 return jsonOut({ error: '未知指令' });
 }
@@ -669,21 +669,45 @@ return { error: '找不到登記編號' };
 }
 
 function submitPayment_(params) {
-const sheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName('06_繳費管理');
+const regNo = String(params.regNo || '').trim().toUpperCase();
+const type = String(params.type || '').trim();
+const amount = Number(params.amount);
+const last5 = String(params.last5 || '').trim();
+if (!regNo) return { error: '請輸入登記編號' };
+if (!['訂金', '尾款', '全額'].includes(type)) return { error: '繳費類型不正確' };
+if (!Number.isFinite(amount) || amount <= 0) return { error: '匯款金額不正確' };
+if (!/^\d{5}$/.test(last5)) return { error: '末五碼請填入 5 位數字' };
+
+const ss = SpreadsheetApp.getActiveSpreadsheet();
+const registrationSheet = ss.getSheetByName('02_報名資料');
+const registrations = registrationSheet.getDataRange().getValues();
+let registrationStatus = '';
+for (let i = 1; i < registrations.length; i++) {
+if (String(registrations[i][0] || '').trim().toUpperCase() === regNo) {
+registrationStatus = String(registrations[i][13] || '').trim();
+break;
+}
+}
+if (!registrationStatus) return { error: '找不到登記編號' };
+if (!['確認同行', '已通過', '已繳費'].includes(registrationStatus)) {
+return { error: '同行名額尚未確認，請收到付款通知後再回報' };
+}
+
+const sheet = ss.getSheetByName('06_繳費管理');
 const data = sheet.getDataRange().getValues();
 for (let i = 1; i < data.length; i++) {
-if (data[i][0] === params.regNo) {
+if (String(data[i][0] || '').trim().toUpperCase() === regNo) {
 const today = new Date().toLocaleDateString('zh-TW');
-if (params.type === '訂金' || params.type === '全額') {
-sheet.getRange(i+1,5).setValue(params.type);
-sheet.getRange(i+1,6).setValue(params.amount);
+if (type === '訂金' || type === '全額') {
+sheet.getRange(i+1,5).setValue(type);
+sheet.getRange(i+1,6).setValue(amount);
 sheet.getRange(i+1,7).setValue(today);
-sheet.getRange(i+1,8).setValue(params.last5);
+sheet.getRange(i+1,8).setValue(last5);
 sheet.getRange(i+1,13).setValue('訂金待對帳');
 } else {
-sheet.getRange(i+1,9).setValue(params.amount);
+sheet.getRange(i+1,9).setValue(amount);
 sheet.getRange(i+1,10).setValue(today);
-sheet.getRange(i+1,11).setValue(params.last5);
+sheet.getRange(i+1,11).setValue(last5);
 sheet.getRange(i+1,13).setValue('尾款待對帳');
 }
 return { success: true };
